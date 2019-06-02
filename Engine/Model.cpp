@@ -27,6 +27,9 @@ bool Model::Initialize(ID3D11Device* device, char* fileName, wchar_t* textureFil
 		return false;
 	}
 
+	m_position = Vector3(0.0f, 0.0f, 0.0f);
+	m_rotation = Vector3(0.0, 0.0f, 0.0f);
+
 	return true;
 }
 
@@ -113,6 +116,17 @@ bool Model::Render(ID3D11DeviceContext* deviceContext)
 	}
 
 	return true;
+}
+
+void Model::SetPosition(float x, float y, float z)
+{
+}
+
+void Model::SetRotation(float yaw, float pitch, float roll)
+{
+	m_rotation.x = yaw;
+	m_rotation.y = pitch;
+	m_rotation.z = roll;
 }
 
 bool Model::RenderBuffer(ID3D11DeviceContext* deviceContext)

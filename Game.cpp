@@ -33,7 +33,7 @@ void Game::Initialize(HWND window, int width, int height)
 
 	m_Model = std::make_unique<Model>();
 
-	if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
+	if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/seafloor.dds")) {
 		OnDeviceLost();
 	}
 
@@ -70,8 +70,11 @@ void Game::Tick()
 void Game::Update(DX::StepTimer const& timer)
 {
     float elapsedTime = float(timer.GetElapsedSeconds());
+	float time = float(timer.GetTotalSeconds());
 
     // TODO: Add your game logic here.
+
+	//m_Model->SetRotation(time * 1.f, 0.0f, 0.0f);
     elapsedTime;
 }
 
@@ -96,6 +99,9 @@ void Game::Render()
 	if (!m_Model->Render(m_Graphics->getRenderer()->getContext())) {
 		OnDeviceLost();
 	}
+
+	m_world = m_world.CreateTranslation(m_Model->GetPosition());
+	m_world = m_world.CreateFromYawPitchRoll(m_Model->GetRotation().x, m_Model->GetRotation().y, m_Model->GetRotation().z);
 
 	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model->getIndexCount(), m_world, m_view, m_projection, m_Model->getTexture())) {
 		OnDeviceLost();
@@ -170,19 +176,16 @@ void Game::CreateDevice()
 	//m_shape2 = GeometricPrimitive::CreateSphere(m_d3dContext.Get());
 
 	m_world = DirectX::SimpleMath::Matrix::Identity;
-	m_world2 = m_world;
-
-	m_world2 = SimpleMath::Matrix::CreateTranslation(DirectX::SimpleMath::Vector3(1.0f, 0.f, 0.f));
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateResources()
 {
     // TODO: Initialize windows-size dependent objects here.
-	m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f),
+	m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(0.f, 0.f, 4.f),
 		DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 	m_projection = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
-		float(1280) / float(720), 0.1f, 10.f);
+		float(1280) / float(720), 0.1f, 1000.f);
 }
 
 void Game::OnDeviceLost()

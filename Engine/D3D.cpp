@@ -35,6 +35,7 @@ void D3D::Reset()
 	m_swapChain.Reset();
 	m_d3dContext.Reset();
 	m_d3dDevice.Reset();
+	m_rasterState.Reset();
 }
 
 bool D3D::Present()
@@ -221,8 +222,27 @@ bool D3D::CreateContext(HWND hwnd, int outputWidth, int outputHeight)
 
 	m_commonStates = std::make_unique<DirectX::CommonStates>(m_d3dDevice.Get());
 
-	m_d3dContext->RSSetState(m_commonStates->CullCounterClockwise());
-	// TODO: Initialize windows-size dependent objects here.
+	CreateRasterState(m_d3dDevice.Get());
 
 	return true;
+}
+
+void D3D::CreateRasterState(ID3D11Device* device)
+{
+	D3D11_RASTERIZER_DESC rasterDesc;
+
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	DX::ThrowIfFailed(device->CreateRasterizerState(&rasterDesc, m_rasterState.ReleaseAndGetAddressOf()));
+
+	m_d3dContext->RSSetState(m_rasterState.Get());
 }

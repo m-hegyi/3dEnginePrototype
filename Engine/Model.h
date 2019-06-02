@@ -40,7 +40,14 @@ public:
 
 	bool Render(ID3D11DeviceContext* deviceContext);
 
+	void SetPosition(float x, float y, float z);
+	void SetRotation(float yaw, float pitch, float roll);
+
 	int getIndexCount() const { return m_indexCount; };
+
+	DirectX::SimpleMath::Vector3 GetPosition() const { return m_position; };
+	DirectX::SimpleMath::Vector3 GetRotation() const { return m_rotation; };
+
 	ID3D11ShaderResourceView* getTexture() const { return m_Texture->getTexture(); };
 
 private:
@@ -57,6 +64,9 @@ private:
 private:
 	int m_vertexCount;
 	int m_indexCount;
+
+	DirectX::SimpleMath::Vector3			m_position;
+	DirectX::SimpleMath::Vector3			m_rotation;
 
 	std::unique_ptr<ModelType[]>			m_model;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>	m_vertexBuffer;
