@@ -48,6 +48,11 @@ public:
 	DirectX::SimpleMath::Vector3 GetPosition() const { return m_position; };
 	DirectX::SimpleMath::Vector3 GetRotation() const { return m_rotation; };
 
+	DirectX::SimpleMath::Matrix GetWorldMatrix() const {
+		return DirectX::SimpleMath::Matrix::CreateFromYawPitchRoll(m_rotation.x, m_rotation.y, m_rotation.z)
+			* DirectX::SimpleMath::Matrix::CreateTranslation(m_position);
+	}
+
 	ID3D11ShaderResourceView* getTexture() const { return m_Texture->getTexture(); };
 
 private:

@@ -66,6 +66,7 @@ private:
 
 	std::unique_ptr<Graphics>						m_Graphics;
 	std::unique_ptr<Model>							m_Model;
+	std::unique_ptr<Model>							m_Model2;
 	std::unique_ptr<Shader>							m_Shader;
 
 	DirectX::SimpleMath::Matrix						m_world;

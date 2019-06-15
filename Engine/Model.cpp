@@ -120,6 +120,9 @@ bool Model::Render(ID3D11DeviceContext* deviceContext)
 
 void Model::SetPosition(float x, float y, float z)
 {
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
 }
 
 void Model::SetRotation(float yaw, float pitch, float roll)

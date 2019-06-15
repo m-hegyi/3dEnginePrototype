@@ -38,6 +38,12 @@ void Game::Initialize(HWND window, int width, int height)
 		OnDeviceLost();
 	}
 
+	m_Model2 = std::make_unique<Model>();
+
+	if (!m_Model2->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
+		OnDeviceLost();
+	}
+
 	m_Shader = std::make_unique<Shader>();
 
 	if (!m_Shader->Initialize(m_Graphics->getRenderer()->getDevice(), window)) {
@@ -76,6 +82,10 @@ void Game::Update(DX::StepTimer const& timer)
     // TODO: Add your game logic here.
 
 	m_Model->SetRotation(time * .2f, 0.0f, 0.0f);
+	m_Model->SetPosition(time * 0.5f, 0.0f, 0.0f);
+
+	m_Model2->SetRotation(time * -0.2f, 0.0f, 0.0f);
+	m_Model2->SetPosition(time * -0.5, 0.0f, 0.0f);
     elapsedTime;
 }
 
@@ -101,10 +111,20 @@ void Game::Render()
 		OnDeviceLost();
 	}
 
-	m_world = m_world.CreateTranslation(m_Model->GetPosition());
-	m_world = m_world.CreateFromYawPitchRoll(m_Model->GetRotation().x, m_Model->GetRotation().y, m_Model->GetRotation().z);
+	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model->getIndexCount(), m_Model->GetWorldMatrix(), m_view, m_projection, 
+		m_Model->getTexture())) {
+		OnDeviceLost();
+	}
 
-	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model->getIndexCount(), m_world, m_view, m_projection, m_Model->getTexture())) {
+	if (!m_Model->Render(m_Graphics->getRenderer()->getContext())) {
+		OnDeviceLost();
+	}
+
+	m_world = m_world.CreateFromYawPitchRoll(m_Model2->GetRotation().x, m_Model2->GetRotation().y, m_Model2->GetRotation().z)
+		* SimpleMath::Matrix::CreateTranslation(m_Model2->GetPosition());
+
+	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model2->getIndexCount(), m_Model2->GetWorldMatrix(), m_view, m_projection,
+		m_Model2->getTexture())) {
 		OnDeviceLost();
 	}
 

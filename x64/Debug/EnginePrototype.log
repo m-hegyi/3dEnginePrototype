@@ -1,2 +1,6 @@
-﻿  Game.cpp
+﻿  Model.cpp
+  Game.cpp
+f:\direct3d\engineprototype\game.cpp(88): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Main.cpp
+  Generating Code...
   EnginePrototype.vcxproj -> F:\Direct3D\x64\Debug\EnginePrototype.exe
