@@ -210,21 +210,91 @@ bool D3D::CreateContext(HWND hwnd, int outputWidth, int outputHeight)
 	// Create a view interface on the rendertarget to use on bind.
 	DX::ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, m_renderTargetView.ReleaseAndGetAddressOf()));
 
-	// Allocate a 2-D surface as the depth/stencil buffer and
-	// create a DepthStencil view on this surface to use on bind.
-	CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL);
-
-	ComPtr<ID3D11Texture2D> depthStencil;
-	DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, depthStencil.GetAddressOf()));
-
-	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
-	DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
-
-	m_commonStates = std::make_unique<DirectX::CommonStates>(m_d3dDevice.Get());
+	CreateDepthStencilBuffer(m_d3dDevice.Get());
+	CreateDepthStencilState(m_d3dDevice.Get());
+	CreateDepthStencilView(m_d3dDevice.Get());
 
 	CreateRasterState(m_d3dDevice.Get());
 
 	return true;
+}
+
+void D3D::CreateDepthStencilBuffer(ID3D11Device* device) 
+{
+	D3D11_TEXTURE2D_DESC depthBufferDesc;
+
+	// Initialize the description of the depth buffer
+	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+
+	// Set up the description of the depth buffer
+	depthBufferDesc.Width = 1280;
+	depthBufferDesc.Height = 720;
+	depthBufferDesc.MipLevels = 1;
+	depthBufferDesc.ArraySize = 1;
+	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthBufferDesc.SampleDesc.Count = 1;
+	depthBufferDesc.SampleDesc.Quality = 0;
+	depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthBufferDesc.CPUAccessFlags = 0;
+	depthBufferDesc.MiscFlags = 0;
+
+	// Create the texture for depth buffer using the filled out description
+	DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(&depthBufferDesc, NULL, m_depthStencilBuffer.ReleaseAndGetAddressOf()));
+}
+
+void D3D::CreateDepthStencilState(ID3D11Device* device)
+{
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+
+	// Initialize the description of the stencil state
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+	// Set up the description of the stencil state
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilDesc.StencilEnable = true;
+	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front facing
+	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back facing
+	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create the depth stencil state
+	DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.ReleaseAndGetAddressOf()));
+	
+	// Set the depth stencil state
+	m_d3dContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+}
+
+void D3D::CreateDepthStencilView(ID3D11Device* device)
+{
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+
+	// Initialize the depth stencil view
+	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+
+	// Set up the depth stenciel view description
+	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+	// Create the depth stencil view
+	DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
+
+	// Bind the render target view and depth stencil buffer to the output render pipeline
+	m_d3dContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 }
 
 void D3D::CreateRasterState(ID3D11Device* device)
@@ -245,4 +315,18 @@ void D3D::CreateRasterState(ID3D11Device* device)
 	DX::ThrowIfFailed(device->CreateRasterizerState(&rasterDesc, m_rasterState.ReleaseAndGetAddressOf()));
 
 	m_d3dContext->RSSetState(m_rasterState.Get());
+}
+
+void D3D::SetViewport()
+{
+	D3D11_VIEWPORT viewport;
+
+	viewport.Width = (float)1280;
+	viewport.Height = (float)720;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+
+	m_d3dContext->RSSetViewports(1, &viewport);
 }

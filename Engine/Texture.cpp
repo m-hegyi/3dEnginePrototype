@@ -16,8 +16,8 @@ Texture::~Texture()
 bool Texture::Initialize(ID3D11Device* device, wchar_t* fileName)
 {
 
-	//DX::ThrowIfFailed(DirectX::CreateWICTextureFromFile(device, fileName, nullptr, m_texture.ReleaseAndGetAddressOf()));
-	DX::ThrowIfFailed(DirectX::CreateDDSTextureFromFile(device, fileName, nullptr, m_texture.ReleaseAndGetAddressOf()));
+	DX::ThrowIfFailed(DirectX::CreateWICTextureFromFile(device, fileName, nullptr, m_texture.ReleaseAndGetAddressOf()));
+	//DX::ThrowIfFailed(DirectX::CreateDDSTextureFromFile(device, fileName, nullptr, m_texture.ReleaseAndGetAddressOf()));
 
 	return true;
 }

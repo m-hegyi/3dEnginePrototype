@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "Game.h"
+#include <DirectXMath.h>
 
 extern void ExitGame();
 
@@ -33,7 +34,7 @@ void Game::Initialize(HWND window, int width, int height)
 
 	m_Model = std::make_unique<Model>();
 
-	if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/seafloor.dds")) {
+	if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
 		OnDeviceLost();
 	}
 
@@ -74,7 +75,7 @@ void Game::Update(DX::StepTimer const& timer)
 
     // TODO: Add your game logic here.
 
-	//m_Model->SetRotation(time * 1.f, 0.0f, 0.0f);
+	m_Model->SetRotation(time * .2f, 0.0f, 0.0f);
     elapsedTime;
 }
 
@@ -182,10 +183,15 @@ void Game::CreateDevice()
 void Game::CreateResources()
 {
     // TODO: Initialize windows-size dependent objects here.
-	m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(0.f, 0.f, 4.f),
-		DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+	//m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(0.f, 0.f, 4.f),
+		//DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 	m_projection = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
 		float(1280) / float(720), 0.1f, 1000.f);
+
+	m_view = XMMatrixLookAtLH(DirectX::SimpleMath::Vector3(0.f, 0.f, 4.f),
+		DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+
+	m_projection = XMMatrixPerspectiveFovLH(XM_PI / 4.f, float(1280) / float(720), 0.1f, 1000.f);
 }
 
 void Game::OnDeviceLost()

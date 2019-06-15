@@ -1,3 +1,2 @@
 ﻿  Game.cpp
-f:\direct3d\engineprototype\game.cpp(73): warning C4189: 'time': local variable is initialized but not referenced
   EnginePrototype.vcxproj -> F:\Direct3D\x64\Debug\EnginePrototype.exe

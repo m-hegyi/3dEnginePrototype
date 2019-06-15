@@ -32,7 +32,11 @@ private:
 	void CreateDevice();
 	bool CreateContext(HWND hwnd, int outputWidth, int outputHeight);
 
+	void CreateDepthStencilBuffer(ID3D11Device* device);
+	void CreateDepthStencilState(ID3D11Device* device);
+	void CreateDepthStencilView(ID3D11Device* device);
 	void CreateRasterState(ID3D11Device* device);
+	void SetViewport();
 	
 private:
 	int m_outputWidth;
@@ -45,11 +49,10 @@ private:
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain1>			m_swapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D>			m_depthStencilBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
-
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_rasterState;
-
-	std::unique_ptr<DirectX::CommonStates>			m_commonStates;
 };
 
 
