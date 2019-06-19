@@ -17,6 +17,10 @@ public:
 	ID3D11ShaderResourceView* getTexture() const { return m_texture.Get(); };
 
 private:
+
+	bool LoadFromFile(ID3D11Device* device, wchar_t* fileName);
+
+private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 };
 

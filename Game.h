@@ -20,6 +20,10 @@
 #include "Engine/Graphics.h"
 #include "Engine/Model.h"
 #include "Engine/Shader.h"
+#include "Engine/Input.h"
+#include "Engine/Camera.h"
+
+#include "Game/ChunkTerrain.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -44,6 +48,7 @@ public:
 
     // Properties
     void GetDefaultSize( int& width, int& height ) const;
+	Input* GetInput() const { return m_Input.get(); }
 
 private:
 
@@ -67,7 +72,11 @@ private:
 	std::unique_ptr<Graphics>						m_Graphics;
 	std::unique_ptr<Model>							m_Model;
 	std::unique_ptr<Model>							m_Model2;
-	std::unique_ptr<Shader>							m_Shader;
+	std::shared_ptr<Shader>							m_Shader;
+	std::unique_ptr<Input>							m_Input;
+	std::shared_ptr<Camera>							m_Camera;
+
+	std::unique_ptr<ChunkTerrain>					m_Terrain;
 
 	DirectX::SimpleMath::Matrix						m_world;
 	DirectX::SimpleMath::Matrix						m_world2;

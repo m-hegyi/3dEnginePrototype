@@ -1,0 +1,11 @@
+{
+    "entities": [
+        {
+            "name": "Cube",
+            "shape?": "shape.txt",
+            "textures": {
+                "normal": "normal.png"
+            }
+        }
+    ]
+}

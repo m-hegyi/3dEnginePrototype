@@ -17,6 +17,11 @@
     <ClInclude Include="Engine\Light.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\Texture.h" />
+    <ClInclude Include="Engine\Input.h" />
+    <ClInclude Include="Engine\ModelList.h" />
+    <ClInclude Include="Game\Chunk.h" />
+    <ClInclude Include="Game\ChunkTerrain.h" />
+    <ClInclude Include="Engine\Shape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -28,6 +33,10 @@
     <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
+    <ClCompile Include="Game\Chunk.cpp" />
+    <ClCompile Include="Engine\Input.cpp" />
+    <ClCompile Include="Game\ChunkTerrain.cpp" />
+    <ClCompile Include="Engine\Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -50,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Game\entitylist.json" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasePixel.hlsl" />
@@ -59,5 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\cube.txt" />
+    <Text Include="Game\Entities\Cube\cube.txt" />
   </ItemGroup>
 </Project>

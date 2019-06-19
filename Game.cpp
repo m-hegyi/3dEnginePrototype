@@ -32,9 +32,15 @@ void Game::Initialize(HWND window, int width, int height)
 		OnDeviceLost();
 	}
 
-	m_Model = std::make_unique<Model>();
+	m_Camera = std::make_shared<Camera>();
 
-	if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
+	m_Terrain = std::make_unique<ChunkTerrain>();
+
+	m_Terrain->Initialize(m_Graphics->getRenderer()->getDevice());
+
+	//m_Model = std::make_unique<Model>();
+
+	/*if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
 		OnDeviceLost();
 	}
 
@@ -42,13 +48,17 @@ void Game::Initialize(HWND window, int width, int height)
 
 	if (!m_Model2->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
 		OnDeviceLost();
-	}
+	}*/
 
-	m_Shader = std::make_unique<Shader>();
+	m_Shader = std::make_shared<Shader>();
 
 	if (!m_Shader->Initialize(m_Graphics->getRenderer()->getDevice(), window)) {
 		OnDeviceLost();
 	}
+
+	m_Input = std::make_unique<Input>();
+
+	m_Input->Initialize(m_Camera, m_window);
 
     CreateDevice();
 
@@ -79,13 +89,18 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 	float time = float(timer.GetTotalSeconds());
 
+	m_Input->Update(elapsedTime);
+
     // TODO: Add your game logic here.
 
-	m_Model->SetRotation(time * .2f, 0.0f, 0.0f);
-	m_Model->SetPosition(time * 0.5f, 0.0f, 0.0f);
+	//m_Model->SetRotation(time * .4f, 0.0f, 0.0f);
+	//m_Model->SetPosition(time * 0.1f, 0.0f, 0.0f);
 
-	m_Model2->SetRotation(time * -0.2f, 0.0f, 0.0f);
-	m_Model2->SetPosition(time * -0.5, 0.0f, 0.0f);
+	//m_Model2->SetRotation(time * -0.4f, 0.0f, 0.0f);
+	//m_Model2->SetPosition(time * -0.1, 0.0f, 0.0f);
+
+	//m_Camera->SetPosition(SimpleMath::Vector3(0.0f, time * 0.5f, 4.0f));
+	//m_Camera->SetRotation(0.0f, 0.0f, time * 0.1);
     elapsedTime;
 }
 
@@ -102,31 +117,40 @@ void Game::Render()
 	// TODO: something simple
 	//
 
+	//
+	// TODO: something else maybe?
+	//
+	m_view = m_Camera->GetViewMatrix();
+	m_projection = m_Camera->GetProjectionMatrix();
+
+
 	if (!m_Graphics->BeginScreen()) {
 		OnDeviceLost();
 	}
 
 
-	if (!m_Model->Render(m_Graphics->getRenderer()->getContext())) {
-		OnDeviceLost();
-	}
+	//if (!m_Model->Render(m_Graphics->getRenderer()->getContext())) {
+		//OnDeviceLost();
+	//}
 
-	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model->getIndexCount(), m_Model->GetWorldMatrix(), m_view, m_projection, 
-		m_Model->getTexture())) {
-		OnDeviceLost();
-	}
+	//if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model->getIndexCount(), 
+		//m_Model->GetWorldMatrix(), m_view, m_projection, m_Model->getTexture())) {
+		//OnDeviceLost();
+	//}
 
-	if (!m_Model->Render(m_Graphics->getRenderer()->getContext())) {
-		OnDeviceLost();
-	}
+	m_Terrain->Render(m_Graphics->getRenderer()->getContext(), m_Shader, m_view, m_projection);
 
-	m_world = m_world.CreateFromYawPitchRoll(m_Model2->GetRotation().x, m_Model2->GetRotation().y, m_Model2->GetRotation().z)
+	//if (!m_Model->Render(m_Graphics->getRenderer()->getContext())) {
+		//OnDeviceLost();
+	//}
+
+	/*m_world = m_world.CreateFromYawPitchRoll(m_Model2->GetRotation().x, m_Model2->GetRotation().y, m_Model2->GetRotation().z)
 		* SimpleMath::Matrix::CreateTranslation(m_Model2->GetPosition());
 
-	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model2->getIndexCount(), m_Model2->GetWorldMatrix(), m_view, m_projection,
-		m_Model2->getTexture())) {
+	if (!m_Shader->Render(m_Graphics->getRenderer()->getContext(), m_Model2->getIndexCount(), 
+		m_Model2->GetWorldMatrix(), m_view, m_projection, m_Model2->getTexture())) {
 		OnDeviceLost();
-	}
+	}*/
 
 
 	if (!m_Graphics->EndScreen()) {
@@ -205,13 +229,17 @@ void Game::CreateResources()
     // TODO: Initialize windows-size dependent objects here.
 	//m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(0.f, 0.f, 4.f),
 		//DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-	m_projection = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
-		float(1280) / float(720), 0.1f, 1000.f);
+	//m_projection = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
+		//float(1280) / float(720), 0.1f, 1000.f);
 
 	m_view = XMMatrixLookAtLH(DirectX::SimpleMath::Vector3(0.f, 0.f, 4.f),
 		DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
-	m_projection = XMMatrixPerspectiveFovLH(XM_PI / 4.f, float(1280) / float(720), 0.1f, 1000.f);
+	m_view = m_Camera->GetViewMatrix();
+
+	//m_projection = XMMatrixPerspectiveFovLH(XM_PI / 4.f, float(1280) / float(720), 0.1f, 1000.f);
+	m_projection = m_Camera->GetProjectionMatrix();
+
 }
 
 void Game::OnDeviceLost()
@@ -223,6 +251,9 @@ void Game::OnDeviceLost()
 	m_Model.reset();
 	m_Shader->Reset();
 	m_Shader.reset();
+
+	m_Input.reset();
+	m_Camera.reset();
 
     CreateDevice();
 
