@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\BaseFont.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\D3D.h" />
     <ClInclude Include="Engine\Input.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="StepTimer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\BaseFont.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\D3D.cpp" />
     <ClCompile Include="Engine\Graphics.cpp" />
@@ -202,6 +204,9 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Fonts\big.spritefont" />
+    <None Include="Assets\Fonts\medium.spritefont" />
+    <None Include="Assets\Fonts\small.spritefont" />
     <None Include="Game\entitylist.json" />
     <None Include="packages.config" />
   </ItemGroup>

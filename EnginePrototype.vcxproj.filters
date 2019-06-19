@@ -22,6 +22,7 @@
     <ClInclude Include="Game\Chunk.h" />
     <ClInclude Include="Game\ChunkTerrain.h" />
     <ClInclude Include="Engine\Shape.h" />
+    <ClInclude Include="Engine\BaseFont.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="Engine\Input.cpp" />
     <ClCompile Include="Game\ChunkTerrain.cpp" />
     <ClCompile Include="Engine\Shape.cpp" />
+    <ClCompile Include="Engine\BaseFont.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -60,6 +62,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Game\entitylist.json" />
+    <None Include="Assets\Fonts\big.spritefont" />
+    <None Include="Assets\Fonts\medium.spritefont" />
+    <None Include="Assets\Fonts\small.spritefont" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasePixel.hlsl" />
