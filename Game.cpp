@@ -1,10 +1,11 @@
 //
 // Game.cpp
 //
-
 #include "pch.h"
-#include "Game.h"
+
 #include <DirectXMath.h>
+#include <sstream>
+#include "Game.h"
 
 extern void ExitGame();
 
@@ -50,6 +51,7 @@ void Game::Initialize(HWND window, int width, int height)
 		OnDeviceLost();
 	}*/
 
+
 	m_Shader = std::make_shared<Shader>();
 
 	if (!m_Shader->Initialize(m_Graphics->getRenderer()->getDevice(), window)) {
@@ -90,6 +92,17 @@ void Game::Update(DX::StepTimer const& timer)
 	float time = float(timer.GetTotalSeconds());
 
 	m_Input->Update(elapsedTime);
+
+	uint32_t frames = timer.GetFramesPerSecond();
+
+	std::wostringstream stringStream;
+
+	stringStream.precision(4);
+
+	stringStream << "FPS: " << frames << std::endl;
+	stringStream << "Még több szöveg.";
+
+	m_Graphics->get2DRenderer()->test((WCHAR*)stringStream.str().c_str(), (UINT32)stringStream.str().size());
 
     // TODO: Add your game logic here.
 
@@ -151,6 +164,8 @@ void Game::Render()
 		m_Model2->GetWorldMatrix(), m_view, m_projection, m_Model2->getTexture())) {
 		OnDeviceLost();
 	}*/
+
+	m_Graphics->get2DRenderer()->PrintFPS();
 
 
 	if (!m_Graphics->EndScreen()) {

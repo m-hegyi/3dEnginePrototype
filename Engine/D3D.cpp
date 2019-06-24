@@ -74,7 +74,7 @@ bool D3D::Clear()
 
 void D3D::CreateDevice()
 {
-	UINT creationFlags = 0;
+	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 #ifdef _DEBUG
 	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;

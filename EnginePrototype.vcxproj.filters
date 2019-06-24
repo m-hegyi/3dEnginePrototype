@@ -23,6 +23,7 @@
     <ClInclude Include="Game\ChunkTerrain.h" />
     <ClInclude Include="Engine\Shape.h" />
     <ClInclude Include="Engine\BaseFont.h" />
+    <ClInclude Include="Engine\D2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="Game\ChunkTerrain.cpp" />
     <ClCompile Include="Engine\Shape.cpp" />
     <ClCompile Include="Engine\BaseFont.cpp" />
+    <ClCompile Include="Engine\D2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

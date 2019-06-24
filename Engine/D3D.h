@@ -27,6 +27,8 @@ public:
 
 	ID3D11DeviceContext* getContext() const { return m_d3dContext.Get(); };
 
+	IDXGISwapChain1* getSwapChain() const { return m_swapChain.Get(); }
+
 private:
 
 	void CreateDevice();

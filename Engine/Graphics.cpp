@@ -4,6 +4,7 @@
 Graphics::Graphics()
 {
 	m_D3D = std::make_unique<D3D>();
+	m_D2D = std::make_unique<D2D>();
 }
 
 Graphics::~Graphics()
@@ -13,6 +14,10 @@ Graphics::~Graphics()
 bool Graphics::Initialize(HWND hwnd, int outputWidth, int outputHeight)
 {
 	if (!m_D3D->Initialize(hwnd, outputWidth, outputHeight)) {
+		return false;
+	}
+
+	if (!m_D2D->Initialize(m_D3D.get())) {
 		return false;
 	}
 	

@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <memory>
 #include "D3D.h"
+#include "D2D.h"
 
 #pragma once
 class Graphics
@@ -21,8 +22,11 @@ public:
 
 	D3D* getRenderer() const { return m_D3D.get(); };
 
+	D2D* get2DRenderer() const { return m_D2D.get(); };
+
 private:
 	std::unique_ptr<D3D> m_D3D;
+	std::unique_ptr<D2D> m_D2D;
 };
 
 #endif

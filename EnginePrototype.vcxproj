@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="Engine\BaseFont.h" />
     <ClInclude Include="Engine\Camera.h" />
+    <ClInclude Include="Engine\D2D.h" />
     <ClInclude Include="Engine\D3D.h" />
     <ClInclude Include="Engine\Input.h" />
     <ClInclude Include="Engine\Light.h" />
@@ -174,6 +175,7 @@
   <ItemGroup>
     <ClCompile Include="Engine\BaseFont.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
+    <ClCompile Include="Engine\D2D.cpp" />
     <ClCompile Include="Engine\D3D.cpp" />
     <ClCompile Include="Engine\Graphics.cpp" />
     <ClCompile Include="Engine\Input.cpp" />
