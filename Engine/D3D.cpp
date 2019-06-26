@@ -72,6 +72,11 @@ bool D3D::Clear()
 	return true;
 }
 
+void D3D::updateScreenSize(HWND hwnd, int outputWidth, int outputHeight)
+{
+	CreateContext(hwnd, outputWidth, outputHeight);
+}
+
 void D3D::CreateDevice()
 {
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -137,11 +142,17 @@ bool D3D::CreateContext(HWND hwnd, int outputWidth, int outputHeight)
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
 	m_d3dContext->OMSetRenderTargets(_countof(nullViews), nullViews, nullptr);
 	m_renderTargetView.Reset();
+	//m_depthStencilBuffer.Reset();
+	//m_depthStencilState.Reset();
 	m_depthStencilView.Reset();
+	m_rasterState.Reset();
 	m_d3dContext->Flush();
 
-	UINT backBufferWidth = static_cast<UINT>(outputWidth);
-	UINT backBufferHeight = static_cast<UINT>(outputHeight);
+	m_outputWidth = outputWidth;
+	m_outputHeight = outputHeight;
+
+	UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+	UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 	DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
 	DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	UINT backBufferCount = 2;
@@ -149,6 +160,7 @@ bool D3D::CreateContext(HWND hwnd, int outputWidth, int outputHeight)
 	// If the swap chain already exists, resize it, otherwise create one.
 	if (m_swapChain)
 	{
+		//m_d3dContext->ClearState();
 		HRESULT hr = m_swapChain->ResizeBuffers(backBufferCount, backBufferWidth, backBufferHeight, backBufferFormat, 0);
 
 		if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
@@ -210,9 +222,21 @@ bool D3D::CreateContext(HWND hwnd, int outputWidth, int outputHeight)
 	// Create a view interface on the rendertarget to use on bind.
 	DX::ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, m_renderTargetView.ReleaseAndGetAddressOf()));
 
-	CreateDepthStencilBuffer(m_d3dDevice.Get());
+	// Allocate a 2-D surface as the depth/stencil buffer and
+   // create a DepthStencil view on this surface to use on bind.
+	CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL);
+
+	ComPtr<ID3D11Texture2D> depthStencil;
+	DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, depthStencil.GetAddressOf()));
+
+	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
+	DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
+
+
+	// temperory off
+	/*CreateDepthStencilBuffer(m_d3dDevice.Get());
 	CreateDepthStencilState(m_d3dDevice.Get());
-	CreateDepthStencilView(m_d3dDevice.Get());
+	CreateDepthStencilView(m_d3dDevice.Get());*/
 
 	CreateRasterState(m_d3dDevice.Get());
 
@@ -227,8 +251,8 @@ void D3D::CreateDepthStencilBuffer(ID3D11Device* device)
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 
 	// Set up the description of the depth buffer
-	depthBufferDesc.Width = 1280;
-	depthBufferDesc.Height = 720;
+	depthBufferDesc.Width = m_outputWidth;
+	depthBufferDesc.Height = m_outputHeight;
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -245,6 +269,10 @@ void D3D::CreateDepthStencilBuffer(ID3D11Device* device)
 
 void D3D::CreateDepthStencilState(ID3D11Device* device)
 {
+	if (m_depthStencilState) {
+		return;
+	}
+
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 
 	// Initialize the description of the stencil state
@@ -280,7 +308,7 @@ void D3D::CreateDepthStencilState(ID3D11Device* device)
 
 void D3D::CreateDepthStencilView(ID3D11Device* device)
 {
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 
 	// Initialize the depth stencil view
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -321,8 +349,8 @@ void D3D::SetViewport()
 {
 	D3D11_VIEWPORT viewport;
 
-	viewport.Width = (float)1280;
-	viewport.Height = (float)720;
+	viewport.Width = (float)m_outputWidth;
+	viewport.Height = (float)m_outputHeight;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;

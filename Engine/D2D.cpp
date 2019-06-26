@@ -8,8 +8,11 @@ D2D::~D2D()
 {
 }
 
-bool D2D::Initialize(D3D* direct3D)
+bool D2D::Initialize(D3D* direct3D, int outputWidth, int outputHeight)
 {
+	m_outputWidth = outputWidth;
+	m_outputHeight = outputHeight;
+
 	if (!CreateDevice(direct3D)) {
 		return false;
 	}
@@ -25,10 +28,29 @@ bool D2D::Initialize(D3D* direct3D)
 	return true;
 }
 
+void D2D::beforeUpdateScreenSize()
+{
+	m_d2dContext.Reset();
+}
+
+void D2D::updateScreenSize(int width, int height, D3D* direct3D)
+{
+	m_outputWidth = width;
+	m_outputHeight = height;
+
+	// create its context
+	if (FAILED(m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS, &m_d2dContext))) {
+		return;
+	}
+
+	CreateContext(direct3D);
+	
+}
+
 void D2D::test(WCHAR* string, UINT32 length)
 {
 	m_writeFactory->CreateTextLayout(string, length, m_textFormatFPS.Get(),
-		(float)1280, (float)720, m_textLayoutFPS.ReleaseAndGetAddressOf());
+		(float)m_outputWidth, (float)m_outputHeight, m_textLayoutFPS.ReleaseAndGetAddressOf());
 }
 
 void D2D::PrintFPS()

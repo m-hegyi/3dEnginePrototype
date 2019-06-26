@@ -13,10 +13,12 @@ public:
 	Graphics();
 	~Graphics();
 
-	bool Initialize(HWND hwnd, int outputWidt, int outputHeight);
+	bool Initialize(HWND hwnd, int outputWidth, int outputHeight);
 
 	bool BeginScreen();
 	bool EndScreen();
+
+	void updateScreenSize(HWND hwnd, int outputWidth, int heioutputHeightght);
 
 	void reset();
 

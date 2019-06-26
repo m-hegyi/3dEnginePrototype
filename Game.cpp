@@ -100,7 +100,7 @@ void Game::Update(DX::StepTimer const& timer)
 	stringStream.precision(4);
 
 	stringStream << "FPS: " << frames << std::endl;
-	stringStream << "Még több szöveg.";
+	stringStream << "Felbontás: " << m_outputWidth << "x" << m_outputHeight;
 
 	m_Graphics->get2DRenderer()->test((WCHAR*)stringStream.str().c_str(), (UINT32)stringStream.str().size());
 
@@ -214,6 +214,10 @@ void Game::OnWindowSizeChanged(int width, int height)
 {
     m_outputWidth = std::max(width, 1);
     m_outputHeight = std::max(height, 1);
+
+	m_Graphics->updateScreenSize(m_window, m_outputWidth, m_outputHeight);
+
+	m_Camera->UpdateScreenSize(width, height);
 
     //CreateResources();
 

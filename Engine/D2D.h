@@ -20,7 +20,10 @@ public:
 	D2D();
 	~D2D();
 
-	bool Initialize(D3D* direct3D);
+	bool Initialize(D3D* direct3D, int outputWidth, int outputHeight);
+
+	void beforeUpdateScreenSize();
+	void updateScreenSize(int outputWidth, int outputHeight, D3D* direct3D);
 
 	void test(WCHAR* string, UINT32 length);
 
@@ -32,6 +35,8 @@ private:
 	bool InitializeTextFormats();
 
 private:
+	int m_outputWidth;
+	int m_outputHeight;
 
 	// brushes
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> yellowBrush;

@@ -17,7 +17,7 @@ bool Graphics::Initialize(HWND hwnd, int outputWidth, int outputHeight)
 		return false;
 	}
 
-	if (!m_D2D->Initialize(m_D3D.get())) {
+	if (!m_D2D->Initialize(m_D3D.get(), outputWidth, outputHeight)) {
 		return false;
 	}
 	
@@ -40,6 +40,13 @@ bool Graphics::EndScreen()
 	}
 
 	return true;
+}
+
+void Graphics::updateScreenSize(HWND hwnd, int outputWidth, int outputHeight)
+{
+	m_D2D->beforeUpdateScreenSize();
+	m_D3D->updateScreenSize(hwnd, outputWidth, outputHeight);
+	m_D2D->updateScreenSize(outputWidth, outputHeight, m_D3D.get());
 }
 
 void Graphics::reset()

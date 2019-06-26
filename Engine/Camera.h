@@ -15,6 +15,8 @@ public:
 
 	void SetPosition(DirectX::SimpleMath::Vector3 position);
 
+	void UpdateScreenSize(int screenWidth, int screenHeight);
+
 	void Render();
 	void GetViewMatrix(DirectX::SimpleMath::Matrix &viewMatrix) { viewMatrix = m_viewMatrix; };
 	DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; }

@@ -36,6 +36,15 @@ void Camera::SetPosition(DirectX::SimpleMath::Vector3 position)
 	CalculateProjectionMatrix();
 }
 
+void Camera::UpdateScreenSize(int screenWidth, int screenHeight)
+{
+	m_screenWidth = screenWidth;
+	m_screenHeight = screenHeight;
+
+	CalculateViewMatrix();
+	CalculateProjectionMatrix();
+}
+
 void Camera::Render()
 {
 }

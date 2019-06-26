@@ -21,6 +21,8 @@ public:
 	bool Present();
 	bool Clear();
 
+	void updateScreenSize(HWND hwnd, int outputWidth, int outputHeight);
+
 	void Reset();
 
 	ID3D11Device* getDevice() const { return m_d3dDevice.Get(); };
