@@ -22,6 +22,7 @@
 #include "Engine/Shader.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
+#include "Engine/Light.h"
 
 #include "Game/ChunkTerrain.h"
 
@@ -75,6 +76,7 @@ private:
 	std::shared_ptr<Shader>							m_Shader;
 	std::unique_ptr<Input>							m_Input;
 	std::shared_ptr<Camera>							m_Camera;
+	std::unique_ptr<Light>							m_Light;
 
 	std::unique_ptr<ChunkTerrain>					m_Terrain;
 

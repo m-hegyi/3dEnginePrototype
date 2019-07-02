@@ -10,8 +10,10 @@ Camera::Camera() : m_pitch(0), m_yaw(0), m_roll(0)
 	m_fov = XM_PI / 4.f;
 	m_nearZ = 1.0f;
 	m_farZ = 1000.f;
-	m_position = SimpleMath::Vector3(0.f, 1.f, 4.f);
-	m_rotation = SimpleMath::Vector3(0.f, -0.5f, -1.f);
+	m_position = SimpleMath::Vector3(-7.f, 3.f, 8.f);
+	m_rotation = SimpleMath::Vector3(0.f, 0.f, 0.f);
+	m_pitch = 0.1f;
+	m_yaw = -1.6f;
 
 	CalculateViewMatrix();
 	CalculateProjectionMatrix();

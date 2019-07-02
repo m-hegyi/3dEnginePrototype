@@ -29,7 +29,7 @@ public:
 	bool Update();
 
 private:
-	std::array<std::unique_ptr<Model>, 512> m_Models;
+	std::unique_ptr<Model>					m_Model;
 	//std::vector<std::unique_ptr<Model>>	m_Models;
 
 	DirectX::SimpleMath::Vector3 m_position;

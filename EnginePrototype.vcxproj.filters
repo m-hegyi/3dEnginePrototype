@@ -41,6 +41,7 @@
     <ClCompile Include="Engine\Shape.cpp" />
     <ClCompile Include="Engine\BaseFont.cpp" />
     <ClCompile Include="Engine\D2D.cpp" />
+    <ClCompile Include="Engine\Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -73,9 +74,12 @@
     <FxCompile Include="Shaders\BaseVertex.hlsl" />
     <FxCompile Include="Shaders\BasePixelTexture.hlsl" />
     <FxCompile Include="Shaders\BaseVertexTexture.hlsl" />
+    <FxCompile Include="Shaders\LightPixel.hlsl" />
+    <FxCompile Include="Shaders\LightVertex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\cube.txt" />
     <Text Include="Game\Entities\Cube\cube.txt" />
+    <Text Include="Data\sphere.txt" />
   </ItemGroup>
 </Project>

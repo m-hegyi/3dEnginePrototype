@@ -33,34 +33,34 @@ void Input::Update(float elapsedTime)
 	SimpleMath::Vector3 move = SimpleMath::Vector3::Zero;
 
 	if (kb.Up || kb.W) {
-		move.z -= 1.f;
+		move.z -= 1.f * elapsedTime;
 	}
 	
 	if (kb.Down || kb.S) {
-		move.z += 1.f;
+		move.z += 1.f * elapsedTime;
 	}
 
 	if (kb.Left || kb.A) {
-		move.x += 1.f;
+		move.x += 1.f * elapsedTime;
 	}
 
 	if (kb.Right || kb.D) {
-		move.x -= 1.f;
+		move.x -= 1.f * elapsedTime;
 	}
 
 	if (kb.LeftShift) {
-		move.y -= 1.f;
+		move.y -= 1.f * elapsedTime;
 	}
 
 	if (kb.Space) {
-		move.y += 1.f;
+		move.y += 1.f * elapsedTime;
 	}
 
 	SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromYawPitchRoll(yaw, .0f, .0f);
 
 	move = SimpleMath::Vector3::Transform(move, q);
 
-	move *= 0.3f;
+	move *= 5.f;
 
 	m_Camera->SetPosition(m_Camera->getPosition() + move);
 

@@ -22,6 +22,7 @@ private:
 	{
 		DirectX::SimpleMath::Vector3 position;
 		DirectX::SimpleMath::Vector2 texture;
+		DirectX::SimpleMath::Vector3 normal;
 	};
 
 	struct ModelType

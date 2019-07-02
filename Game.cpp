@@ -39,12 +39,12 @@ void Game::Initialize(HWND window, int width, int height)
 
 	m_Terrain->Initialize(m_Graphics->getRenderer()->getDevice());
 
-	//m_Model = std::make_unique<Model>();
+	/*m_Model = std::make_unique<Model>();
 
-	/*if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
+	if (!m_Model->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
 		OnDeviceLost();
 	}
-
+	
 	m_Model2 = std::make_unique<Model>();
 
 	if (!m_Model2->Initialize(m_Graphics->getRenderer()->getDevice(), "Data/cube.txt", L"Assets/texture1.png")) {
@@ -57,6 +57,16 @@ void Game::Initialize(HWND window, int width, int height)
 	if (!m_Shader->Initialize(m_Graphics->getRenderer()->getDevice(), window)) {
 		OnDeviceLost();
 	}
+
+	m_Light = std::make_unique<Light>();
+
+	if (!m_Light) {
+		OnDeviceLost();
+	}
+
+	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	m_Light->SetDiffuseColor(1.0f, 0.0f, 1.0f, 1.0f);
+	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
 
 	m_Input = std::make_unique<Input>();
 
@@ -71,7 +81,7 @@ void Game::Initialize(HWND window, int width, int height)
     /*
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
-    */
+    //*/
 }
 
 // Executes the basic game loop.
@@ -100,9 +110,13 @@ void Game::Update(DX::StepTimer const& timer)
 	stringStream.precision(4);
 
 	stringStream << "FPS: " << frames << std::endl;
-	stringStream << "Felbontás: " << m_outputWidth << "x" << m_outputHeight;
+	stringStream << "Felbontás: " << m_outputWidth << "x" << m_outputHeight << std::endl;
+	auto pos = m_Camera->getPosition();
+	auto rot = m_Camera->getRotation();
+	stringStream << "Camera pos:" << "x: " << pos.x << " y: " << pos.y << " z: " << pos.z << std::endl;
+	stringStream << "Camera rot:" << "yaw: " << rot.x << " pitch: " << rot.y << " roll: " << rot.z;
 
-	m_Graphics->get2DRenderer()->test((WCHAR*)stringStream.str().c_str(), (UINT32)stringStream.str().size());
+	m_Graphics->get2DRenderer()->test((WCHAR*)stringStream.str().c_str(), (UINT32)stringStream.str().size()) ;
 
     // TODO: Add your game logic here.
 

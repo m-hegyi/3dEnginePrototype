@@ -10,6 +10,14 @@ Light::~Light()
 {
 }
 
+void Light::SetAmbientColor(float red, float green, float blue, float alpha)
+{
+	m_ambientColor.x = red;
+	m_ambientColor.y = green;
+	m_ambientColor.z = blue;
+	m_ambientColor.w = alpha;
+}
+
 void Light::SetDiffuseColor(float red, float green, float blue, float alpha)
 {
 	m_diffuseColor.x = red;
