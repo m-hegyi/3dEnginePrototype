@@ -13,22 +13,17 @@ Input::~Input()
 
 }
 
-void Input::Initialize(std::shared_ptr<Camera> camera, HWND hwnd)
+void Input::Initialize(HWND hwnd)
 {
 	m_keyboard = std::make_unique<Keyboard>();
 	m_mouse = std::make_unique<Mouse>();
 
 	m_mouse->SetWindow(hwnd);
-
-	m_Camera = camera;
 }
 
 void Input::Update(float elapsedTime)
 {
-	auto kb = m_keyboard->GetState();
-
-	float pitch = m_Camera->getPitch();
-	float yaw = m_Camera->getYaw();
+	/*auto kb = m_keyboard->GetState();
 
 	SimpleMath::Vector3 move = SimpleMath::Vector3::Zero;
 
@@ -88,6 +83,6 @@ void Input::Update(float elapsedTime)
 		OutputDebugString(L"\n");*/
 
 		//m_Camera->SetRotation(0.0f, rotation.y + delta.x, .0f);
-	}
+	//}
 
 }

@@ -33,6 +33,11 @@ public:
 	void GetPosition(DirectX::SimpleMath::Vector3 &position) const { position = m_position; }
 	void GetRotiation(DirectX::SimpleMath::Vector3 &rotation) const { rotation = m_rotation; }
 
+	float GetScreenDepth() const { return m_farZ; };
+
+	int GetScreenWidth() const { return m_screenWidth; };
+	int GetScreenHeight() const { return m_screenHeight; };
+
 private:
 	void CalculateViewMatrix();
 	void CalculateProjectionMatrix();

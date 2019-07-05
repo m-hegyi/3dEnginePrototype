@@ -24,6 +24,12 @@
     <ClInclude Include="Engine\Shape.h" />
     <ClInclude Include="Engine\BaseFont.h" />
     <ClInclude Include="Engine\D2D.h" />
+    <ClInclude Include="Engine\Abstract\AbstractScreen.h" />
+    <ClInclude Include="Engine\Abstract\AbstractState.h" />
+    <ClInclude Include="Game\GameState.h" />
+    <ClInclude Include="Game\Screens\LoadingScreen.h" />
+    <ClInclude Include="Game\Screens\MainScreen.h" />
+    <ClInclude Include="Engine\Frustum.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -42,6 +48,10 @@
     <ClCompile Include="Engine\BaseFont.cpp" />
     <ClCompile Include="Engine\D2D.cpp" />
     <ClCompile Include="Engine\Light.cpp" />
+    <ClCompile Include="Game\GameState.cpp" />
+    <ClCompile Include="Game\Screens\LoadingScreen.cpp" />
+    <ClCompile Include="Game\Screens\MainScreen.cpp" />
+    <ClCompile Include="Engine\Frustum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

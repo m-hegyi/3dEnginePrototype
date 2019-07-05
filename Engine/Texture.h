@@ -2,7 +2,10 @@
 #define _TEXTURE_H
 
 #include <wrl/client.h>
+#include <memory>
 #include <d3d11.h>
+
+#include "Graphics.h"
 
 
 #pragma once
@@ -12,16 +15,18 @@ public:
 	Texture();
 	~Texture();
 
-	bool Initialize(ID3D11Device* device, wchar_t* fileName);
+	bool Initialize(std::shared_ptr<Graphics> graphics, wchar_t* fileName);
 
 	ID3D11ShaderResourceView* getTexture() const { return m_texture.Get(); };
 
 private:
 
-	bool LoadFromFile(ID3D11Device* device, wchar_t* fileName);
+	bool LoadFromFile(wchar_t* fileName);
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	m_texture;
+
+	std::shared_ptr<Graphics>							m_Graphics;
 };
 
 #endif

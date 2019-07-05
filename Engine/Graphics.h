@@ -5,6 +5,7 @@
 #include <memory>
 #include "D3D.h"
 #include "D2D.h"
+#include "Frustum.h"
 
 #pragma once
 class Graphics
@@ -26,9 +27,13 @@ public:
 
 	D2D* get2DRenderer() const { return m_D2D.get(); };
 
+	Frustum* getFrustum() const { return m_Frustum.get(); };
+
 private:
-	std::unique_ptr<D3D> m_D3D;
-	std::unique_ptr<D2D> m_D2D;
+	std::unique_ptr<D3D>		m_D3D;
+	std::unique_ptr<D2D>		m_D2D;
+
+	std::unique_ptr<Frustum>	m_Frustum;
 };
 
 #endif

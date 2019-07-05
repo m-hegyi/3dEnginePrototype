@@ -5,8 +5,6 @@
 #include <Keyboard.h>
 #include <memory>
 
-#include "Camera.h"
-
 #pragma once
 class Input
 {
@@ -14,7 +12,7 @@ public:
 	Input();
 	~Input();
 
-	void Initialize(std::shared_ptr<Camera> camera, HWND hwnd);
+	void Initialize(HWND hwnd);
 
 	void Update(float elapsedTime);
 
@@ -24,8 +22,6 @@ public:
 private:
 	std::unique_ptr<DirectX::Keyboard>	m_keyboard;
 	std::unique_ptr<DirectX::Mouse>		m_mouse;
-
-	std::shared_ptr<Camera>				m_Camera;
 };
 
 #endif

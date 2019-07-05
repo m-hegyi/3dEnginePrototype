@@ -10,6 +10,7 @@
 #include "../Engine/Model.h"
 #include "../Engine/Shader.h"
 #include "../Engine/Shape.h"
+#include "../Engine/Camera.h"
 
 
 #pragma once
@@ -19,17 +20,17 @@ public:
 	Chunk();
 	~Chunk();
 
-	void Initialize(ID3D11Device* device, DirectX::SimpleMath::Vector3 position);
+	void Initialize(std::shared_ptr<Graphics> graphics, DirectX::SimpleMath::Vector3 position);
 
 	void Load();
 	void Unload();
 
-	bool Render(ID3D11DeviceContext* deviceContext, std::shared_ptr<Shader>Shader, 
-		DirectX::SimpleMath::Matrix view, DirectX::SimpleMath::Matrix projection);
+	bool Render(std::shared_ptr<Shader>Shader, std::shared_ptr<Camera> camera);
 	bool Update();
 
 private:
 	std::unique_ptr<Model>					m_Model;
+	std::shared_ptr<Graphics>				m_Graphics;
 	//std::vector<std::unique_ptr<Model>>	m_Models;
 
 	DirectX::SimpleMath::Vector3 m_position;

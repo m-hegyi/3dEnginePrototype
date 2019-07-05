@@ -6,6 +6,7 @@
 #include <wrl\client.h>
 #include <d3d11.h>
 #include "SimpleMath.h"
+#include "Graphics.h"
 
 #pragma once
 class Shader
@@ -34,8 +35,8 @@ public:
 	Shader();
 	~Shader();
 
-	bool Initialize(ID3D11Device* device, HWND hwnd);
-	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
+	bool Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics);
+	bool Render(int indexCount,
 		DirectX::SimpleMath::Matrix worldMatrix, 
 		DirectX::SimpleMath::Matrix viewMatrix, 
 		DirectX::SimpleMath::Matrix projectionMatrix,
@@ -47,11 +48,10 @@ public:
 	void Reset();
 
 private:
-	bool InitializeShader(ID3D11Device* device, HWND hwnd, std::string vertexShaderFile, std::string pixelShaderFile);
+	bool InitializeShader(HWND hwnd, std::string vertexShaderFile, std::string pixelShaderFile);
 	void ResetShader();
 
-	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
-		DirectX::SimpleMath::Matrix worldMatrix, 
+	bool SetShaderParameters(DirectX::SimpleMath::Matrix worldMatrix, 
 		DirectX::SimpleMath::Matrix viewMatrix, 
 		DirectX::SimpleMath::Matrix projectionMatrix,
 		ID3D11ShaderResourceView* texture,
@@ -59,7 +59,7 @@ private:
 		DirectX::SimpleMath::Vector4 diffuseColor,
 		DirectX::SimpleMath::Vector4 ambientColor);
 
-	void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
+	void RenderShader(int indexCount);
 
 	bool GetShaderFile(std::string fileName, ShaderFileType* shaderData);
 
@@ -72,6 +72,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_lightBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>	m_sampleState;
+
+	std::shared_ptr<Graphics>					m_Graphics;
 };
 
 #endif 

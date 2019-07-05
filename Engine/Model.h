@@ -6,7 +6,9 @@
 #include <d3d11.h>
 #include <wrl\client.h>
 #include <SimpleMath.h>
+
 #include "Texture.h"
+#include "Graphics.h"
 
 #pragma once
 class Model
@@ -36,10 +38,10 @@ public:
 	Model();
 	~Model();
 
-	bool Initialize(ID3D11Device* device, char* fileName, wchar_t* textureFileName);
+	bool Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar_t* textureFileName);
 	void Reset();
 
-	bool Render(ID3D11DeviceContext* deviceContext);
+	bool Render();
 
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float yaw, float pitch, float roll);
@@ -57,14 +59,14 @@ public:
 	ID3D11ShaderResourceView* getTexture() const { return m_Texture->getTexture(); };
 
 private:
-	bool InitializeBuffer(ID3D11Device* device);
-	bool RenderBuffer(ID3D11DeviceContext* deviceContext);
+	bool InitializeBuffer();
+	bool RenderBuffer();
 	void ResetBuffer();
 
 	bool LoadModel(char* fileName);
 	void ResetModel();
 
-	bool LoadTexture(ID3D11Device* device, wchar_t* textureFileName);
+	bool LoadTexture(wchar_t* textureFileName);
 	void ResetTexture();
 
 private:
@@ -79,6 +81,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>	m_indexBuffer;
 
 	std::unique_ptr<Texture>				m_Texture;
+
+	std::shared_ptr<Graphics>				m_Graphics;
 };
 
 

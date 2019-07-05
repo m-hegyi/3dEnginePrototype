@@ -11,19 +11,21 @@ Model::~Model()
 {
 }
 
-bool Model::Initialize(ID3D11Device* device, char* fileName, wchar_t* textureFileName)
+bool Model::Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar_t* textureFileName)
 {
 	// TODO
 	// Load model from file properly
+	m_Graphics = graphics;
+
 	if (!LoadModel(fileName)) {
 		return false;
 	}
 
-	if (!InitializeBuffer(device)) {
+	if (!InitializeBuffer()) {
 		return false;
 	}
 
-	if (!LoadTexture(device, textureFileName)) {
+	if (!LoadTexture(textureFileName)) {
 		return false;
 	}
 
@@ -33,7 +35,7 @@ bool Model::Initialize(ID3D11Device* device, char* fileName, wchar_t* textureFil
 	return true;
 }
 
-bool Model::InitializeBuffer(ID3D11Device* device)
+bool Model::InitializeBuffer()
 {
 	//
 	// TODO: DX::ThrowIfFailed -> errorhandling
@@ -80,6 +82,8 @@ bool Model::InitializeBuffer(ID3D11Device* device)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
+	auto device = m_Graphics->getRenderer()->getDevice();
+
 	// Now create the vertex buffer.
 	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, m_vertexBuffer.ReleaseAndGetAddressOf());
 	if (FAILED(result))
@@ -110,9 +114,9 @@ bool Model::InitializeBuffer(ID3D11Device* device)
 	return true;
 }
 
-bool Model::Render(ID3D11DeviceContext* deviceContext)
+bool Model::Render()
 {
-	if (!RenderBuffer(deviceContext)) {
+	if (!RenderBuffer()) {
 		return false;
 	}
 
@@ -133,7 +137,7 @@ void Model::SetRotation(float yaw, float pitch, float roll)
 	m_rotation.z = roll;
 }
 
-bool Model::RenderBuffer(ID3D11DeviceContext* deviceContext)
+bool Model::RenderBuffer()
 {
 	unsigned int stride;
 	unsigned int offset;
@@ -142,6 +146,8 @@ bool Model::RenderBuffer(ID3D11DeviceContext* deviceContext)
 	// Set vertex buffer stride and offset.
 	stride = sizeof(VertexTextureType);
 	offset = 0;
+
+	auto deviceContext = m_Graphics->getRenderer()->getContext();
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
 	deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -211,7 +217,7 @@ bool Model::LoadModel(char* fileName)
 }
 
 
-bool Model::LoadTexture(ID3D11Device* device, wchar_t* textureFileName)
+bool Model::LoadTexture(wchar_t* textureFileName)
 {
 	m_Texture = std::make_unique<Texture>();
 
@@ -219,7 +225,7 @@ bool Model::LoadTexture(ID3D11Device* device, wchar_t* textureFileName)
 		return false;
 	}
 
-	if (!m_Texture->Initialize(device, textureFileName)) {
+	if (!m_Texture->Initialize(m_Graphics, textureFileName)) {
 		return false;
 	}
 

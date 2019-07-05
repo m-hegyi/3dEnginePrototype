@@ -9,6 +9,7 @@
 #include "../Engine/Shader.h"
 #include "../Engine/Texture.h"
 #include "../Engine/Shape.h"
+#include "../Engine/Camera.h"
 
 #pragma once
 class ChunkTerrain
@@ -17,10 +18,9 @@ public:
 	ChunkTerrain();
 	~ChunkTerrain();
 
-	void Initialize(ID3D11Device* device);
+	void Initialize(std::shared_ptr<Graphics> graphics);
 
-	bool Render(ID3D11DeviceContext* deviceContext, std::shared_ptr<Shader>Shader,
-		DirectX::SimpleMath::Matrix view, DirectX::SimpleMath::Matrix projection);
+	bool Render(std::shared_ptr<Shader>Shader, std::shared_ptr<Camera> camera);
 
 private:
 	std::vector<std::shared_ptr<Chunk>> m_Chunks;

@@ -5,6 +5,7 @@ Graphics::Graphics()
 {
 	m_D3D = std::make_unique<D3D>();
 	m_D2D = std::make_unique<D2D>();
+	m_Frustum = std::make_unique<Frustum>();
 }
 
 Graphics::~Graphics()

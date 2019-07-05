@@ -154,10 +154,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Abstract\AbstractScreen.h" />
+    <ClInclude Include="Engine\Abstract\AbstractState.h" />
     <ClInclude Include="Engine\BaseFont.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\D2D.h" />
     <ClInclude Include="Engine\D3D.h" />
+    <ClInclude Include="Engine\Frustum.h" />
     <ClInclude Include="Engine\Input.h" />
     <ClInclude Include="Engine\Light.h" />
     <ClInclude Include="Engine\Model.h" />
@@ -169,6 +172,9 @@
     <ClInclude Include="Engine\Graphics.h" />
     <ClInclude Include="Game\Chunk.h" />
     <ClInclude Include="Game\ChunkTerrain.h" />
+    <ClInclude Include="Game\GameState.h" />
+    <ClInclude Include="Game\Screens\LoadingScreen.h" />
+    <ClInclude Include="Game\Screens\MainScreen.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="StepTimer.h" />
   </ItemGroup>
@@ -177,6 +183,7 @@
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\D2D.cpp" />
     <ClCompile Include="Engine\D3D.cpp" />
+    <ClCompile Include="Engine\Frustum.cpp" />
     <ClCompile Include="Engine\Graphics.cpp" />
     <ClCompile Include="Engine\Input.cpp" />
     <ClCompile Include="Engine\Light.cpp" />
@@ -187,6 +194,9 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Game\Chunk.cpp" />
     <ClCompile Include="Game\ChunkTerrain.cpp" />
+    <ClCompile Include="Game\GameState.cpp" />
+    <ClCompile Include="Game\Screens\LoadingScreen.cpp" />
+    <ClCompile Include="Game\Screens\MainScreen.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

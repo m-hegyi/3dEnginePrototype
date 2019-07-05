@@ -11,16 +11,18 @@ Shader::~Shader()
 {
 }
 
-bool Shader::Initialize(ID3D11Device* device, HWND hwnd) 
+bool Shader::Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics) 
 {
-	if (!InitializeShader(device, hwnd, "LightVertex.cso", "LightPixel.cso")) {
+	m_Graphics = graphics;
+
+	if (!InitializeShader(hwnd, "LightVertex.cso", "LightPixel.cso")) {
 		return false;
 	}
 
 	return true;
 }
 
-bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, std::string vertexShaderFile, std::string pixelShaderFile)
+bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::string pixelShaderFile)
 {
 	HRESULT result;
 	Microsoft::WRL::ComPtr<ID3D10Blob> errorMessage;
@@ -38,6 +40,8 @@ bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, std::string verte
 	if (!GetShaderFile(vertexShaderFile, vertexShader.get())) {
 		return false;
 	}
+
+	auto device = m_Graphics->getRenderer()->getDevice();
 
 	result = device->CreateVertexShader(vertexShader->data, vertexShader->length, NULL, m_vertexShader.ReleaseAndGetAddressOf());
 	if (FAILED(result)) {
@@ -170,21 +174,23 @@ bool Shader::InitializeShader(ID3D11Device* device, HWND hwnd, std::string verte
 	return true;
 }
 
-bool Shader::Render(ID3D11DeviceContext* deviceContext, int indexCount, 
-	SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
+bool Shader::Render(int indexCount, SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
 	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
 {
-	if (!SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor, ambientColor)) {
+
+	if (!SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor, ambientColor)) {
 		return false;
 	}
 
-	RenderShader(deviceContext, indexCount);
+	RenderShader(indexCount);
 
 	return true;
 }
 
-void Shader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+void Shader::RenderShader(int indexCount)
 {
+	auto deviceContext = m_Graphics->getRenderer()->getContext();
+
 	//Set the vertex input layout.
 	deviceContext->IASetInputLayout(m_layout.Get());
 
@@ -202,8 +208,7 @@ void Shader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 }
 
-bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext,
-	SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
+bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
 	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
 {
 	HRESULT result;
@@ -216,6 +221,8 @@ bool Shader::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	worldMatrix			= worldMatrix.Transpose();
 	viewMatrix			= viewMatrix.Transpose();
 	projectionMatrix	= projectionMatrix.Transpose();
+
+	auto deviceContext = m_Graphics->getRenderer()->getContext();
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
