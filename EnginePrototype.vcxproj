@@ -157,14 +157,17 @@
     <ClInclude Include="Engine\Abstract\AbstractScreen.h" />
     <ClInclude Include="Engine\Abstract\AbstractState.h" />
     <ClInclude Include="Engine\BaseFont.h" />
+    <ClInclude Include="Engine\Bitmap.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\D2D.h" />
     <ClInclude Include="Engine\D3D.h" />
+    <ClInclude Include="Engine\DebugWindow.h" />
     <ClInclude Include="Engine\Frustum.h" />
     <ClInclude Include="Engine\Input.h" />
     <ClInclude Include="Engine\Light.h" />
     <ClInclude Include="Engine\Model.h" />
     <ClInclude Include="Engine\ModelList.h" />
+    <ClInclude Include="Engine\RenderTexture.h" />
     <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\Shape.h" />
     <ClInclude Include="Engine\Texture.h" />
@@ -180,14 +183,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BaseFont.cpp" />
+    <ClCompile Include="Engine\Bitmap.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\D2D.cpp" />
     <ClCompile Include="Engine\D3D.cpp" />
+    <ClCompile Include="Engine\DebugWindow.cpp" />
     <ClCompile Include="Engine\Frustum.cpp" />
     <ClCompile Include="Engine\Graphics.cpp" />
     <ClCompile Include="Engine\Input.cpp" />
     <ClCompile Include="Engine\Light.cpp" />
     <ClCompile Include="Engine\Model.cpp" />
+    <ClCompile Include="Engine\RenderTexture.cpp" />
     <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Shape.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />

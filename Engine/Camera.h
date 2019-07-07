@@ -18,10 +18,10 @@ public:
 	void UpdateScreenSize(int screenWidth, int screenHeight);
 
 	void Render();
-	void GetViewMatrix(DirectX::SimpleMath::Matrix &viewMatrix) { viewMatrix = m_viewMatrix; };
-	DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; }
-	void GetProjectionMatrix(DirectX::SimpleMath::Matrix &projectionMatrix) { projectionMatrix = m_projectionMatrix; }
-	DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; }
+	DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; };
+	DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
+	DirectX::SimpleMath::Matrix Get2DViewMatrix() const { return m_2dViewMatrix; };
+	DirectX::SimpleMath::Matrix GetOrthoMatrix() const { return m_orthoMatrix; };
 
 	// Exprimentings
 	void SetRotation(float yaw, float pitch, float roll);
@@ -40,7 +40,9 @@ public:
 
 private:
 	void CalculateViewMatrix();
+	void Calculate2DViewMatrix();
 	void CalculateProjectionMatrix();
+	void CalculateOrthoMatrix();
 
 private:
 	int m_screenWidth, m_screenHeight;
@@ -51,7 +53,9 @@ private:
 	DirectX::SimpleMath::Vector3 m_position;
 	DirectX::SimpleMath::Vector3 m_rotation;
 	DirectX::SimpleMath::Matrix m_viewMatrix;
+	DirectX::SimpleMath::Matrix m_2dViewMatrix;
 	DirectX::SimpleMath::Matrix m_projectionMatrix;
+	DirectX::SimpleMath::Matrix m_orthoMatrix;
 };
 
 #endif

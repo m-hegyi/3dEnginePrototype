@@ -17,7 +17,7 @@ void Chunk::Initialize(std::shared_ptr<Graphics> graphics, DirectX::SimpleMath::
 
 	m_Model = std::make_unique<Model>();
 
-	m_Model->Initialize(graphics, "Data/cube.txt", L"Assets/texture1.png");
+	m_Model->Initialize(graphics, "Data/sphere.txt", L"Assets/texture1.png");
 }
 
 bool Chunk::Update() 

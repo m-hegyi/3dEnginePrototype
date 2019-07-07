@@ -33,6 +33,18 @@ void MainScreen::Load(HWND window)
 	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_Light->SetDiffuseColor(1.0f, 0.0f, 1.0f, 1.0f);
 	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
+
+	m_Bitmap = std::make_unique<Bitmap>();
+
+	m_Bitmap->Initialize(m_Graphics, L"Assets/texture1.png", 240, 240);
+
+	m_RenderTexture = std::make_unique<RenderTexture>(m_Graphics);
+
+	m_RenderTexture->Initialize(m_Graphics->getRenderer()->GetOutputWidth(), m_Graphics->getRenderer()->GetOutputHeight());
+
+	m_DebugWindow = std::make_unique<DebugWindow>();
+
+	m_DebugWindow->Initialize(m_Graphics, 300, 300);
 }
 
 void MainScreen::UnLoad()
@@ -42,11 +54,30 @@ void MainScreen::UnLoad()
 bool MainScreen::Render()
 {
 
+	if (!RenderToTexture()) 
+	{
+		return false;
+	}
+
 	if (!m_Graphics->BeginScreen()) {
 		return false;
 	}
 
-	m_Terrain->Render(m_Shader, m_Camera);
+	RenderScene();
+
+	m_Graphics->getRenderer()->TurnZBufferOff();
+
+	m_DebugWindow->Render();
+
+	m_Shader->Render(m_DebugWindow->GetIndexCount(), m_DebugWindow->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
+		m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	m_Bitmap->Render();
+
+	m_Shader->Render(m_Bitmap->GetIndexCount(), m_Bitmap->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
+		m_Bitmap->GetTexture(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	m_Graphics->getRenderer()->TurnZBufferOn();
 
 	m_Graphics->get2DRenderer()->PrintFPS();
 
@@ -60,6 +91,25 @@ bool MainScreen::Render()
 void MainScreen::UpdateScreenSize(int width, int height)
 {
 	m_Camera->UpdateScreenSize(width, height);
+}
+
+bool MainScreen::RenderToTexture()
+{
+	m_RenderTexture->SetRenderTarget();
+
+	m_RenderTexture->ClearRenderTarget(0.0f, 0.0f, 1.0f, 1.0f);
+
+	RenderScene();
+
+	m_Graphics->getRenderer()->SetBackBufferRenderTarget();
+	return true;
+}
+
+bool MainScreen::RenderScene()
+{
+	m_Terrain->Render(m_Shader, m_Camera);
+
+	return true;
 }
 
 bool MainScreen::Update(DX::StepTimer const& timer)
@@ -80,7 +130,8 @@ bool MainScreen::Update(DX::StepTimer const& timer)
 	auto pos = m_Camera->getPosition();
 	auto rot = m_Camera->getRotation();
 	stringStream << "Camera pos:" << "x: " << pos.x << " y: " << pos.y << " z: " << pos.z << std::endl;
-	stringStream << "Camera rot:" << "yaw: " << rot.x << " pitch: " << rot.y << " roll: " << rot.z;
+	stringStream << "Camera rot:" << "yaw: " << rot.x << " pitch: " << rot.y << " roll: " << rot.z << std::endl;
+	stringStream << "Rendered object count: " << m_Graphics->GetObjCount();
 
 	m_Graphics->get2DRenderer()->test((WCHAR*)stringStream.str().c_str(), (UINT32)stringStream.str().size());
 
@@ -145,6 +196,10 @@ bool MainScreen::Update(DX::StepTimer const& timer)
 
 		//m_Camera->SetRotation(0.0f, rotation.y + delta.x, .0f);
 	}
+
+	m_Bitmap->Update(400, 100);
+
+	m_DebugWindow->Update(100, 100);
 
 
 	return true;

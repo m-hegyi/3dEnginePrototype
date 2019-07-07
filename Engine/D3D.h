@@ -25,11 +25,18 @@ public:
 
 	void Reset();
 
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+
 	ID3D11Device* getDevice() const { return m_d3dDevice.Get(); };
-
 	ID3D11DeviceContext* getContext() const { return m_d3dContext.Get(); };
+	IDXGISwapChain1* getSwapChain() const { return m_swapChain.Get(); };
+	ID3D11DepthStencilView* GetDepthStencilView() const { return m_depthStencilView.Get(); };
 
-	IDXGISwapChain1* getSwapChain() const { return m_swapChain.Get(); }
+	void SetBackBufferRenderTarget();
+
+	int GetOutputWidth() const { return m_outputWidth; };
+	int GetOutputHeight() const { return m_outputHeight; };
 
 private:
 
@@ -55,6 +62,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D>			m_depthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthDisabledStencilState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	m_rasterState;
 };

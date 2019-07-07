@@ -16,7 +16,9 @@ Camera::Camera() : m_pitch(0), m_yaw(0), m_roll(0)
 	m_yaw = -1.6f;
 
 	CalculateViewMatrix();
+	Calculate2DViewMatrix();
 	CalculateProjectionMatrix();
+	CalculateOrthoMatrix();
 }
 
 Camera::Camera(int screenWidth, int screenHeight, float fov, float nearZ, float farZ,
@@ -35,6 +37,7 @@ void Camera::SetPosition(DirectX::SimpleMath::Vector3 position)
 	m_position = position;
 
 	CalculateViewMatrix();
+	Calculate2DViewMatrix();
 	CalculateProjectionMatrix();
 }
 
@@ -44,7 +47,9 @@ void Camera::UpdateScreenSize(int screenWidth, int screenHeight)
 	m_screenHeight = screenHeight;
 
 	CalculateViewMatrix();
+	Calculate2DViewMatrix();
 	CalculateProjectionMatrix();
+	CalculateOrthoMatrix();
 }
 
 void Camera::Render()
@@ -96,7 +101,18 @@ void Camera::CalculateViewMatrix()
 	//m_viewMatrix = XMMatrixLookToLH(m_position, m_rotation, SimpleMath::Vector3::/UnitY);
 }
 
+void Camera::Calculate2DViewMatrix()
+{
+	m_2dViewMatrix = XMMatrixLookAtLH(SimpleMath::Vector3(0.f, 0.f, -10.f),
+		SimpleMath::Vector3(0.f, 0.f, 1.0f), SimpleMath::Vector3(0.f, 1.f, 0.f));
+}
+
 void Camera::CalculateProjectionMatrix()
 {
 	m_projectionMatrix = XMMatrixPerspectiveFovLH(m_fov, float(m_screenWidth) / float(m_screenHeight), m_nearZ, m_farZ);
+}
+
+void Camera::CalculateOrthoMatrix()
+{
+	m_orthoMatrix = XMMatrixOrthographicLH(m_screenWidth, m_screenHeight, m_nearZ, m_farZ);
 }

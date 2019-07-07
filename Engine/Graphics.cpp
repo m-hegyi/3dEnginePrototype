@@ -27,6 +27,8 @@ bool Graphics::Initialize(HWND hwnd, int outputWidth, int outputHeight)
 
 bool Graphics::BeginScreen()
 {
+	m_objCount = 0;
+
 	if (!m_D3D->Clear()) {
 		return false;
 	}
@@ -53,4 +55,9 @@ void Graphics::updateScreenSize(HWND hwnd, int outputWidth, int outputHeight)
 void Graphics::reset()
 {
 	m_D3D.reset();
+}
+
+void Graphics::UpdateStat(int objCount)
+{
+	m_objCount += objCount;
 }

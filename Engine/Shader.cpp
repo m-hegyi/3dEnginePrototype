@@ -206,6 +206,8 @@ void Shader::RenderShader(int indexCount)
 
 	// Render
 	deviceContext->DrawIndexed(indexCount, 0, 0);
+
+	m_Graphics->UpdateStat(1);
 }
 
 bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,

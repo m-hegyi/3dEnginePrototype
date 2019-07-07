@@ -23,6 +23,9 @@ public:
 
 	void reset();
 
+	void UpdateStat(int objCount);
+	int GetObjCount() const { return m_objCount; };
+
 	D3D* getRenderer() const { return m_D3D.get(); };
 
 	D2D* get2DRenderer() const { return m_D2D.get(); };
@@ -30,6 +33,8 @@ public:
 	Frustum* getFrustum() const { return m_Frustum.get(); };
 
 private:
+	int							m_objCount;
+
 	std::unique_ptr<D3D>		m_D3D;
 	std::unique_ptr<D2D>		m_D2D;
 

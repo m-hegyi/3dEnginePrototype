@@ -30,6 +30,9 @@
     <ClInclude Include="Game\Screens\LoadingScreen.h" />
     <ClInclude Include="Game\Screens\MainScreen.h" />
     <ClInclude Include="Engine\Frustum.h" />
+    <ClInclude Include="Engine\Bitmap.h" />
+    <ClInclude Include="Engine\RenderTexture.h" />
+    <ClInclude Include="Engine\DebugWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -52,6 +55,9 @@
     <ClCompile Include="Game\Screens\LoadingScreen.cpp" />
     <ClCompile Include="Game\Screens\MainScreen.cpp" />
     <ClCompile Include="Engine\Frustum.cpp" />
+    <ClCompile Include="Engine\Bitmap.cpp" />
+    <ClCompile Include="Engine\RenderTexture.cpp" />
+    <ClCompile Include="Engine\DebugWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
