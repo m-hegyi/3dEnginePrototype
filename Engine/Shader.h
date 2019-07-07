@@ -19,6 +19,13 @@ public:
 		DirectX::SimpleMath::Matrix projection;
 	};
 
+	struct FogBufferType
+	{
+		float fogStart;
+		float fogEnd;
+		float padding1, padding2;
+	};
+
 	struct ShaderFileType
 	{
 		char* data;
@@ -57,7 +64,9 @@ private:
 		ID3D11ShaderResourceView* texture,
 		DirectX::SimpleMath::Vector3 lightDirection,
 		DirectX::SimpleMath::Vector4 diffuseColor,
-		DirectX::SimpleMath::Vector4 ambientColor);
+		DirectX::SimpleMath::Vector4 ambientColor,
+		float fogStart,
+		float fogEnd);
 
 	void RenderShader(int indexCount);
 
@@ -70,6 +79,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>	m_layout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_matrixBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_lightBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_fogBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>	m_sampleState;
 

@@ -15,7 +15,7 @@ bool Shader::Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics)
 {
 	m_Graphics = graphics;
 
-	if (!InitializeShader(hwnd, "LightVertex.cso", "LightPixel.cso")) {
+	if (!InitializeShader(hwnd, "FogVertex.cso", "FogPixel.cso")) {
 		return false;
 	}
 
@@ -31,6 +31,7 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
+	D3D11_BUFFER_DESC fogBufferDesc;
 
 	// Initialize the pointers this function will use to null.
 	errorMessage.Reset();
@@ -168,6 +169,20 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 		return false;
 	}
 
+	// Setup the description of the dynamic fog constant buffer that is in the vertex shader.
+	fogBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	fogBufferDesc.ByteWidth = sizeof(FogBufferType);
+	fogBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	fogBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	fogBufferDesc.MiscFlags = 0;
+	fogBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&fogBufferDesc, NULL, m_fogBuffer.ReleaseAndGetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	delete vertexShader->data;
 	delete pixelShader->data;
 
@@ -178,7 +193,7 @@ bool Shader::Render(int indexCount, SimpleMath::Matrix worldMatrix, SimpleMath::
 	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
 {
 
-	if (!SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor, ambientColor)) {
+	if (!SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor, ambientColor, 0.0f, 25.0f)) {
 		return false;
 	}
 
@@ -211,12 +226,15 @@ void Shader::RenderShader(int indexCount)
 }
 
 bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
-	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
+	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, 
+	SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor,
+	float fogStart, float fogEnd)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	LightBufferType* dataPtr2;
+	FogBufferType* dataPtr3;
 	unsigned int bufferNumber;
 
 	// Transpose the matrices to prepare them for the shader.
@@ -225,6 +243,10 @@ bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Mat
 	projectionMatrix	= projectionMatrix.Transpose();
 
 	auto deviceContext = m_Graphics->getRenderer()->getContext();
+
+	////////////////////////////////////////////////////////
+	//
+	////////////////////////////////////////////////////////
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -253,6 +275,10 @@ bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Mat
 	// Set shader texture resource in the pixel shader
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 
+	////////////////////////////////////////////////////////
+	//
+	////////////////////////////////////////////////////////
+
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(m_lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
@@ -277,6 +303,32 @@ bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Mat
 
 	// Finally set the light constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, m_lightBuffer.GetAddressOf());
+
+	////////////////////////////////////////////////////////
+	//
+	////////////////////////////////////////////////////////
+	// Lock the fog constant buffer so it can be written to.
+	result = deviceContext->Map(m_fogBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr3 = (FogBufferType*)mappedResource.pData;
+
+	// Copy the fog information into the fog constant buffer.
+	dataPtr3->fogStart = fogStart;
+	dataPtr3->fogEnd = fogEnd;
+
+	// Unlock the constant buffer.
+	deviceContext->Unmap(m_fogBuffer.Get(), 0);
+
+	// Set the position of the fog constant buffer in the vertex shader.
+	bufferNumber = 1;
+
+	// Now set the fog buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, m_fogBuffer.GetAddressOf());
 
 	return true;
 }

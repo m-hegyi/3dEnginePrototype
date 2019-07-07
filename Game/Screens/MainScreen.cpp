@@ -42,9 +42,9 @@ void MainScreen::Load(HWND window)
 
 	m_RenderTexture->Initialize(m_Graphics->getRenderer()->GetOutputWidth(), m_Graphics->getRenderer()->GetOutputHeight());
 
-	m_DebugWindow = std::make_unique<DebugWindow>();
+	//m_DebugWindow = std::make_unique<DebugWindow>();
 
-	m_DebugWindow->Initialize(m_Graphics, 300, 300);
+	//m_DebugWindow->Initialize(m_Graphics, 300, 300);
 }
 
 void MainScreen::UnLoad()
@@ -54,10 +54,10 @@ void MainScreen::UnLoad()
 bool MainScreen::Render()
 {
 
-	if (!RenderToTexture()) 
+	/*if (!RenderToTexture()) 
 	{
 		return false;
-	}
+	}*/
 
 	if (!m_Graphics->BeginScreen()) {
 		return false;
@@ -67,15 +67,15 @@ bool MainScreen::Render()
 
 	m_Graphics->getRenderer()->TurnZBufferOff();
 
-	m_DebugWindow->Render();
+	/*m_DebugWindow->Render();
 
 	m_Shader->Render(m_DebugWindow->GetIndexCount(), m_DebugWindow->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
 		m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+*/
+	//m_Bitmap->Render();
 
-	m_Bitmap->Render();
-
-	m_Shader->Render(m_Bitmap->GetIndexCount(), m_Bitmap->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
-		m_Bitmap->GetTexture(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	//m_Shader->Render(m_Bitmap->GetIndexCount(), m_Bitmap->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
+		//m_Bitmap->GetTexture(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	m_Graphics->getRenderer()->TurnZBufferOn();
 
@@ -199,7 +199,7 @@ bool MainScreen::Update(DX::StepTimer const& timer)
 
 	m_Bitmap->Update(400, 100);
 
-	m_DebugWindow->Update(100, 100);
+	//m_DebugWindow->Update(100, 100);
 
 
 	return true;

@@ -92,6 +92,8 @@
     <FxCompile Include="Shaders\BaseVertexTexture.hlsl" />
     <FxCompile Include="Shaders\LightPixel.hlsl" />
     <FxCompile Include="Shaders\LightVertex.hlsl" />
+    <FxCompile Include="Shaders\FogPixel.hlsl" />
+    <FxCompile Include="Shaders\FogVertex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\cube.txt" />
