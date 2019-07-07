@@ -26,7 +26,7 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 {
 	HRESULT result;
 	Microsoft::WRL::ComPtr<ID3D10Blob> errorMessage;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[3];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -98,13 +98,21 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[1].InstanceDataStepRate = 0;
 
-	polygonLayout[2].SemanticName = "NORMAL";
-	polygonLayout[2].SemanticIndex = 0;
+	polygonLayout[2].SemanticName = "TEXCOORD";
+	polygonLayout[2].SemanticIndex = 1;
 	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonLayout[2].InputSlot = 0;
-	polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[2].InstanceDataStepRate = 0;
+	polygonLayout[2].InputSlot = 1;
+	polygonLayout[2].AlignedByteOffset = 0;
+	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[2].InstanceDataStepRate = 1;
+
+	polygonLayout[3].SemanticName = "NORMAL";
+	polygonLayout[3].SemanticIndex = 0;
+	polygonLayout[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[3].InputSlot = 0;
+	polygonLayout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[3].InstanceDataStepRate = 0;
 
 
 	// Get a count of the elements in the layout.
@@ -189,20 +197,22 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 	return true;
 }
 
-bool Shader::Render(int indexCount, SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
-	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
+bool Shader::Render(int vertexCount, int instanceCount, 
+	SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
+	ID3D11ShaderResourceView* texture, 
+	SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
 {
 
 	if (!SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor, ambientColor, 0.0f, 25.0f)) {
 		return false;
 	}
 
-	RenderShader(indexCount);
+	RenderShader(vertexCount, instanceCount);
 
 	return true;
 }
 
-void Shader::RenderShader(int indexCount)
+void Shader::RenderShader(int vertexCount, int instanceCount)
 {
 	auto deviceContext = m_Graphics->getRenderer()->getContext();
 
@@ -220,7 +230,8 @@ void Shader::RenderShader(int indexCount)
 	deviceContext->PSSetSamplers(0, 1, m_sampleState.GetAddressOf());
 
 	// Render
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	deviceContext->DrawInstanced(vertexCount, instanceCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	m_Graphics->UpdateStat(1);
 }

@@ -43,7 +43,8 @@ public:
 	~Shader();
 
 	bool Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics);
-	bool Render(int indexCount,
+	bool Render(int vertexCount,
+		int instanceCount,
 		DirectX::SimpleMath::Matrix worldMatrix, 
 		DirectX::SimpleMath::Matrix viewMatrix, 
 		DirectX::SimpleMath::Matrix projectionMatrix,
@@ -68,7 +69,7 @@ private:
 		float fogStart,
 		float fogEnd);
 
-	void RenderShader(int indexCount);
+	void RenderShader(int vertexCount, int instanceCount);
 
 	bool GetShaderFile(std::string fileName, ShaderFileType* shaderData);
 

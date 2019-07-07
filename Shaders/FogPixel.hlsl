@@ -45,7 +45,7 @@ float4 main(PixelInput input) : SV_TARGET
 
     fogColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
-    color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
+    //color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
 
     return color;
 }

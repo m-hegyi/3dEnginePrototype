@@ -27,7 +27,7 @@ bool Chunk::Update()
 
 bool Chunk::Render(std::shared_ptr<Shader> Shader, std::shared_ptr<Camera> camera)
 {
-	for (int i = 0; i < 4; i++) {
+	/*for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 8; j++) {
 			for (int z = 0; z < 8; z++) {
 				m_Model->SetPosition((j * 2), i*2, z * 2);
@@ -47,6 +47,6 @@ bool Chunk::Render(std::shared_ptr<Shader> Shader, std::shared_ptr<Camera> camer
 					DirectX::SimpleMath::Vector3(1.0f, -1.0f, 1.0f), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::SimpleMath::Vector4(0.25f, 0.25f, 0.25f, 1.0f));
 			}
 		}
-	}
+	}*/
 	return true;
 }

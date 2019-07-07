@@ -13,8 +13,9 @@ cbuffer FogBuffer
 
 struct VertexInput
 {
-    float3 position : POSITION;
+    float4 position : POSITION;
     float2 tex : TEXCOORD0;
+    float3 instancePosition : TEXCOORD1;
     float3 normal : NORMAL;
 };
 
@@ -29,11 +30,15 @@ struct VertexOutput
 VertexOutput main(VertexInput input)
 {
     VertexOutput output;
-    float4 cameraPosition;
 
-    float4 pos = { input.position.x, input.position.y, input.position.z, 1.0f };
+    input.position.w = 1.0f;
 
-    output.position = mul(pos, worldMatrix);
+     // Update the position of the vertices based on the data for this particular instance.
+    input.position.x += input.instancePosition.x;
+    input.position.y += input.instancePosition.y;
+    input.position.z += input.instancePosition.z;
+
+    output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
     
@@ -42,9 +47,6 @@ VertexOutput main(VertexInput input)
     output.normal = mul(input.normal, (float3x3) worldMatrix);
 
     output.normal = normalize(output.normal);
-
-    cameraPosition = mul(input.position, worldMatrix);
-    cameraPosition = mul(cameraPosition, viewMatrix);
 
     output.fogFactor = saturate((fogEnd - output.position.z) / (fogEnd - fogStart));
 

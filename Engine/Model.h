@@ -34,6 +34,11 @@ private:
 		float nx, ny, nz;
 	};
 
+	struct InstanceType
+	{
+		DirectX::SimpleMath::Vector3 position;
+	};
+
 public:
 	Model();
 	~Model();
@@ -46,7 +51,10 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float yaw, float pitch, float roll);
 
-	int getIndexCount() const { return m_indexCount; };
+	//int getIndexCount() const { return m_indexCount; };
+
+	int GetVertexCount() const { return m_vertexCount; };
+	int GetInstanceCount() const { return m_instanceCount; };
 
 	DirectX::SimpleMath::Vector3 GetPosition() const { return m_position; };
 	DirectX::SimpleMath::Vector3 GetRotation() const { return m_rotation; };
@@ -71,14 +79,16 @@ private:
 
 private:
 	int m_vertexCount;
-	int m_indexCount;
+	//int m_indexCount;
+	int m_instanceCount;
 
 	DirectX::SimpleMath::Vector3			m_position;
 	DirectX::SimpleMath::Vector3			m_rotation;
 
 	std::unique_ptr<ModelType[]>			m_model;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>	m_vertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer>	m_indexBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer>	m_indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>	m_instanceBuffer;
 
 	std::unique_ptr<Texture>				m_Texture;
 

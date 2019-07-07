@@ -35,6 +35,7 @@ private:
 	std::shared_ptr<Shader>							m_Shader;
 	std::shared_ptr<Camera>							m_Camera;
 	std::unique_ptr<Light>							m_Light;
+	std::unique_ptr<Model>							m_Model;
 	std::unique_ptr<ChunkTerrain>					m_Terrain;
 	std::unique_ptr<Bitmap>							m_Bitmap;
 	std::unique_ptr<RenderTexture>					m_RenderTexture;
