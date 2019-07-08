@@ -1,4 +1,10 @@
 #include "Chunk.h"
+#include <math.h>
+#include <stdlib.h>
+
+using namespace DirectX::SimpleMath;
+
+#define PI 3.14159265
 
 Chunk::Chunk()
 {
@@ -10,14 +16,25 @@ Chunk::~Chunk()
 
 }
 
-void Chunk::Initialize(std::shared_ptr<Graphics> graphics, DirectX::SimpleMath::Vector3 position)
+void Chunk::Initialize(std::shared_ptr<Graphics> graphics, Vector3 position)
 {
 	m_position = position;
 	m_Graphics = graphics;
 
 	m_Model = std::make_unique<Model>();
 
-	m_Model->Initialize(graphics, "Data/sphere.txt", L"Assets/texture1.png");
+	std::vector<Vector3> positions;
+
+	for (int i = 0; i < 1; i++) {
+		for (int j = 0; j < 1; j++) {
+			for (int z = 0; z < 1; z++) {
+
+				positions.push_back(Vector3(position.x + (j * 2), 0.0f, position.z + z * 2));
+			}
+		}
+	}
+
+	m_Model->Initialize(graphics, "Data/cube.txt", L"Assets/texture1.png", positions);
 }
 
 bool Chunk::Update() 
@@ -48,5 +65,12 @@ bool Chunk::Render(std::shared_ptr<Shader> Shader, std::shared_ptr<Camera> camer
 			}
 		}
 	}*/
+
+	m_Model->Render();
+
+	Shader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(), m_Model->GetWorldMatrix(), 
+		camera->GetViewMatrix(), camera->GetProjectionMatrix(), m_Model->getTexture(),
+		Vector3(1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f));
+
 	return true;
 }

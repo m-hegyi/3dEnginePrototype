@@ -20,10 +20,6 @@ void MainScreen::Load(HWND window)
 
 	m_Shader = std::make_shared<Shader>();
 
-	m_Model = std::make_unique<Model>();
-
-	m_Model->Initialize(m_Graphics, "Data/sphere.txt", L"Assets/texture1.png");
-
 	if (!m_Shader->Initialize(window, m_Graphics)) {
 		//OnDeviceLost();
 	}
@@ -67,13 +63,7 @@ bool MainScreen::Render()
 		return false;
 	}
 
-	//RenderScene();
-
-	m_Model->Render();
-
-	m_Shader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(),
-		m_Model->GetWorldMatrix(), m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), m_Model->getTexture(),
-		DirectX::SimpleMath::Vector3(1.0f, -1.0f, 1.0f), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::SimpleMath::Vector4(0.25f, 0.25f, 0.25f, 1.0f));
+	RenderScene();
 
 	m_Graphics->getRenderer()->TurnZBufferOff();
 

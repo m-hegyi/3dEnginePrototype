@@ -11,7 +11,8 @@ Model::~Model()
 {
 }
 
-bool Model::Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar_t* textureFileName)
+bool Model::Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar_t* textureFileName,
+	std::vector<DirectX::SimpleMath::Vector3> positions)
 {
 	// TODO
 	// Load model from file properly
@@ -20,6 +21,10 @@ bool Model::Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar
 	if (!LoadModel(fileName)) {
 		return false;
 	}
+
+	m_positions = positions;
+
+	m_instanceCount = positions.size();
 
 	if (!InitializeBuffer()) {
 		return false;
@@ -43,6 +48,10 @@ bool Model::InitializeBuffer()
 
 	//
 	// TODO: multiple vertexType loading
+	//
+
+	//
+	// TODO different class for instancable objects
 	//
 
 
@@ -92,8 +101,6 @@ bool Model::InitializeBuffer()
 		return false;
 	}
 
-	m_instanceCount = 4;
-
 	instances = std::make_unique<InstanceType[]>(m_instanceCount);
 	if (!instances) 
 	{
@@ -101,10 +108,11 @@ bool Model::InitializeBuffer()
 	}
 
 	// Load the instance array with data.
-	instances[0].position = Vector3(-1.5f, -1.5f, 5.0f);
-	instances[1].position = Vector3(-1.5f, 1.5f, 5.0f);
-	instances[2].position = Vector3(1.5f, -1.5f, 5.0f);
-	instances[3].position = Vector3(1.5f, 1.5f, 5.0f);
+	int index = 0;
+	for (auto position : m_positions) {
+		instances[index].position = position;
+		index++;
+	}
 
 	// Set up the description of the instance buffer.
 	instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -159,11 +167,13 @@ bool Model::Render()
 	return true;
 }
 
-void Model::SetPosition(float x, float y, float z)
+void Model::SetPosition(int instanceIndex, float x, float y, float z)
 {
-	m_position.x = x;
-	m_position.y = y;
-	m_position.z = z;
+	if (instanceIndex < m_positions.size()) {
+		m_positions[instanceIndex].x = x;
+		m_positions[instanceIndex].y = y;
+		m_positions[instanceIndex].z = z;
+	}
 }
 
 void Model::SetRotation(float yaw, float pitch, float roll)

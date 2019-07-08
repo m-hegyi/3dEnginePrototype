@@ -43,12 +43,13 @@ public:
 	Model();
 	~Model();
 
-	bool Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar_t* textureFileName);
+	bool Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar_t* textureFileName, 
+		std::vector<DirectX::SimpleMath::Vector3> positions);
 	void Reset();
 
 	bool Render();
 
-	void SetPosition(float x, float y, float z);
+	void SetPosition(int instanceIndex, float x, float y, float z);
 	void SetRotation(float yaw, float pitch, float roll);
 
 	//int getIndexCount() const { return m_indexCount; };
@@ -81,6 +82,8 @@ private:
 	int m_vertexCount;
 	//int m_indexCount;
 	int m_instanceCount;
+
+	std::vector<DirectX::SimpleMath::Vector3> m_positions;
 
 	DirectX::SimpleMath::Vector3			m_position;
 	DirectX::SimpleMath::Vector3			m_rotation;

@@ -11,13 +11,15 @@ ChunkTerrain::~ChunkTerrain()
 void ChunkTerrain::Initialize(std::shared_ptr<Graphics> graphics)
 {
 	for (int i = 0; i < 1; i++) {
-		auto chunk = std::make_shared<Chunk>();
+		for (int j = 0; j < 1; j++) {
+			auto chunk = std::make_shared<Chunk>();
 
-		auto pos = DirectX::SimpleMath::Vector3(16 * i, 1.0f, 1.0f);
+			auto pos = DirectX::SimpleMath::Vector3(64 * i, 1.0f, 64 * j);
 
-		chunk->Initialize(graphics, pos);
+			chunk->Initialize(graphics, pos);
 
-		m_Chunks.push_back(chunk);
+			m_Chunks.push_back(chunk);
+		}
 	}
 
 }
