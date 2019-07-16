@@ -23,6 +23,8 @@ public:
 	DirectX::SimpleMath::Matrix Get2DViewMatrix() const { return m_2dViewMatrix; };
 	DirectX::SimpleMath::Matrix GetOrthoMatrix() const { return m_orthoMatrix; };
 
+	DirectX::SimpleMath::Matrix GetReflectionMatrix() const { return m_reflectionMatrix; };
+
 	// Exprimentings
 	void SetRotation(float yaw, float pitch, float roll);
 
@@ -38,6 +40,7 @@ public:
 	int GetScreenWidth() const { return m_screenWidth; };
 	int GetScreenHeight() const { return m_screenHeight; };
 
+	void CalculateReflectionMatrix();
 private:
 	void CalculateViewMatrix();
 	void Calculate2DViewMatrix();
@@ -56,6 +59,7 @@ private:
 	DirectX::SimpleMath::Matrix m_2dViewMatrix;
 	DirectX::SimpleMath::Matrix m_projectionMatrix;
 	DirectX::SimpleMath::Matrix m_orthoMatrix;
+	DirectX::SimpleMath::Matrix m_reflectionMatrix;
 };
 
 #endif

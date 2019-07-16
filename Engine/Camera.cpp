@@ -101,6 +101,27 @@ void Camera::CalculateViewMatrix()
 	//m_viewMatrix = XMMatrixLookToLH(m_position, m_rotation, SimpleMath::Vector3::/UnitY);
 }
 
+void Camera::CalculateReflectionMatrix()
+{
+	float y = sinf(m_pitch);
+	float r = cosf(m_pitch);
+	float z = r * cosf(m_yaw);
+	float x = r * sinf(m_yaw);
+
+	auto lookAt = m_position - SimpleMath::Vector3(x, y, z);
+
+	auto upDirection = SimpleMath::Vector3(sinf(m_roll), cosf(m_roll), 0.0f);
+
+	//lookAt = SimpleMath::Vector3(0, 0, 5);
+
+	auto position = m_position;
+
+	// TODO height of the object?
+	position.y = -m_position.y + (1 * 2.0f);
+
+	m_reflectionMatrix = XMMatrixLookAtLH(position, lookAt, upDirection);
+}
+
 void Camera::Calculate2DViewMatrix()
 {
 	m_2dViewMatrix = XMMatrixLookAtLH(SimpleMath::Vector3(0.f, 0.f, -10.f),

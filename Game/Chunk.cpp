@@ -68,9 +68,9 @@ bool Chunk::Render(std::shared_ptr<Shader> Shader, std::shared_ptr<Camera> camer
 
 	m_Model->Render();
 
-	Shader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(), m_Model->GetWorldMatrix(), 
+	/*Shader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(), m_Model->GetWorldMatrix(), 
 		camera->GetViewMatrix(), camera->GetProjectionMatrix(), m_Model->getTexture(),
-		Vector3(1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f));
+		Vector3(1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f));*/
 
 	return true;
 }

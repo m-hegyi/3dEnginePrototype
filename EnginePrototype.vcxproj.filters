@@ -33,6 +33,11 @@
     <ClInclude Include="Engine\Bitmap.h" />
     <ClInclude Include="Engine\RenderTexture.h" />
     <ClInclude Include="Engine\DebugWindow.h" />
+    <ClInclude Include="Engine\Abstract\AbstractShader.h" />
+    <ClInclude Include="Engine\Shaders\BasicShader.h" />
+    <ClInclude Include="Engine\Shaders\FogShader.h" />
+    <ClInclude Include="Engine\Shaders\LightShader.h" />
+    <ClInclude Include="Engine\Shaders\ReflectionShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -58,6 +63,10 @@
     <ClCompile Include="Engine\Bitmap.cpp" />
     <ClCompile Include="Engine\RenderTexture.cpp" />
     <ClCompile Include="Engine\DebugWindow.cpp" />
+    <ClCompile Include="Engine\Shaders\BasicShader.cpp" />
+    <ClCompile Include="Engine\Shaders\LightShader.cpp" />
+    <ClCompile Include="Engine\Shaders\FogShader.cpp" />
+    <ClCompile Include="Engine\Shaders\ReflectionShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -94,6 +103,8 @@
     <FxCompile Include="Shaders\LightVertex.hlsl" />
     <FxCompile Include="Shaders\FogPixel.hlsl" />
     <FxCompile Include="Shaders\FogVertex.hlsl" />
+    <FxCompile Include="Shaders\ReflectionVertex.hlsl" />
+    <FxCompile Include="Shaders\ReflectionPixel.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\cube.txt" />

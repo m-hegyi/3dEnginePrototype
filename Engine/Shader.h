@@ -26,6 +26,11 @@ public:
 		float padding1, padding2;
 	};
 
+	struct ReflectionBufferType
+	{
+		DirectX::SimpleMath::Matrix reflectionMatrix;
+	};
+
 	struct ShaderFileType
 	{
 		char* data;
@@ -42,7 +47,7 @@ public:
 	Shader();
 	~Shader();
 
-	bool Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics);
+	bool Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics, std::string vertexShaderFile, std::string pixelShaderFile);
 	bool Render(int vertexCount,
 		int instanceCount,
 		DirectX::SimpleMath::Matrix worldMatrix, 
@@ -51,7 +56,9 @@ public:
 		ID3D11ShaderResourceView* texture,
 		DirectX::SimpleMath::Vector3 lightDirection,
 		DirectX::SimpleMath::Vector4 diffuseColor,
-		DirectX::SimpleMath::Vector4 ambientColor);
+		DirectX::SimpleMath::Vector4 ambientColor,
+		ID3D11ShaderResourceView* reflectionTexture, 
+		DirectX::SimpleMath::Matrix reflectionMatrix);
 
 	void Reset();
 
@@ -67,7 +74,9 @@ private:
 		DirectX::SimpleMath::Vector4 diffuseColor,
 		DirectX::SimpleMath::Vector4 ambientColor,
 		float fogStart,
-		float fogEnd);
+		float fogEnd,
+		ID3D11ShaderResourceView* reflectionTexture, 
+		DirectX::SimpleMath::Matrix reflectionMatrix);
 
 	void RenderShader(int vertexCount, int instanceCount);
 
@@ -81,6 +90,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_matrixBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_lightBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_fogBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>		m_reflectionBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>	m_sampleState;
 

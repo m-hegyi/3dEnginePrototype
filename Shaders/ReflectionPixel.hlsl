@@ -15,7 +15,7 @@ struct PixelInput
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
-    float fogFactor : FOG;
+    float4 reflectionPosition : TEXCOORD1;
 };
 
 float4 main(PixelInput input) : SV_TARGET
@@ -23,14 +23,23 @@ float4 main(PixelInput input) : SV_TARGET
     float4 textureColor;
     float3 lightDir;
     float lightIntensity;
-    float4 fogColor;
     float4 color;
     float2 reflectTexCoord;
     float4 reflectionColor;
 
     textureColor = shaderTexture.Sample(SampleType, input.tex);
 
-    color = ambientColor;
+    // Calculate the projected reflection texture coordinates.
+    reflectTexCoord.x = input.reflectionPosition.x / input.reflectionPosition.w / 2.0f + 0.5f;
+    reflectTexCoord.y = -input.reflectionPosition.y / input.reflectionPosition.w / 2.0f + 0.5f;
+
+    // Sample the texture pixel from the reflection texture using the projected texture coordinates.
+    reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
+
+    // Do a linear interpolation between the two textures for a blend effect.
+    color = lerp(textureColor, reflectionColor, 0.15f);
+
+    /*color = ambientColor;
 
     lightDir = -lightDirection;
 
@@ -47,7 +56,7 @@ float4 main(PixelInput input) : SV_TARGET
 
     fogColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
-    color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
-
+    //color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
+*/
     return color;
 }

@@ -4,11 +4,9 @@ cbuffer MatrixBuffer
     matrix viewMatrix;
     matrix projectionMatrix;
 };
-
-cbuffer FogBuffer
+cbuffer ReflectionBuffer
 {
-    float fogStart;
-    float fogEnd;
+    matrix reflectionMatrix;
 };
 
 struct VertexInput
@@ -24,7 +22,7 @@ struct VertexOutput
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
-    float fogFactor : FOG;
+    float4 reflectionPosiiton : TEXCOORD1;
 };
 
 VertexOutput main(VertexInput input)
@@ -49,7 +47,12 @@ VertexOutput main(VertexInput input)
 
     output.normal = normalize(output.normal);
 
-    output.fogFactor = saturate((fogEnd - output.position.z) / (fogEnd - fogStart));
+    //Create the reflection projection world matrix
+    reflectProjectWorld = mul(reflectionMatrix, projectionMatrix);
+    reflectProjectWorld = mul(worldMatrix, reflectProjectWorld);
+
+    // Calculate the input position against the reflectionProjectionWorld matrix
+    output.reflectionPosiiton = mul(input.position, reflectProjectWorld);
 
     return output;
 }

@@ -34,7 +34,7 @@ bool Model::Initialize(std::shared_ptr<Graphics> graphics, char* fileName, wchar
 		return false;
 	}
 
-	m_position = Vector3(0.0f, 0.0f, 0.0f);
+	m_position = positions[0];
 	m_rotation = Vector3(0.0, 0.0f, 0.0f);
 
 	return true;

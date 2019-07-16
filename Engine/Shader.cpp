@@ -11,11 +11,11 @@ Shader::~Shader()
 {
 }
 
-bool Shader::Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics) 
+bool Shader::Initialize(HWND hwnd, std::shared_ptr<Graphics> graphics, std::string vertexShaderFile, std::string pixelShaderFile)
 {
 	m_Graphics = graphics;
 
-	if (!InitializeShader(hwnd, "FogVertex.cso", "FogPixel.cso")) {
+	if (!InitializeShader(hwnd, vertexShaderFile, pixelShaderFile)) {
 		return false;
 	}
 
@@ -32,6 +32,7 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
 	D3D11_BUFFER_DESC fogBufferDesc;
+	D3D11_BUFFER_DESC reflectionBufferDesc;
 
 	// Initialize the pointers this function will use to null.
 	errorMessage.Reset();
@@ -191,6 +192,20 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 		return false;
 	}
 
+	// Setup the description of the reflection dynamic constant buffer that is in the vertex shader.
+	reflectionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	reflectionBufferDesc.ByteWidth = sizeof(ReflectionBufferType);
+	reflectionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	reflectionBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	reflectionBufferDesc.MiscFlags = 0;
+	reflectionBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&reflectionBufferDesc, NULL, m_reflectionBuffer.ReleaseAndGetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	delete vertexShader->data;
 	delete pixelShader->data;
 
@@ -200,10 +215,12 @@ bool Shader::InitializeShader(HWND hwnd, std::string vertexShaderFile, std::stri
 bool Shader::Render(int vertexCount, int instanceCount, 
 	SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
 	ID3D11ShaderResourceView* texture, 
-	SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor)
+	SimpleMath::Vector3 lightDirection, SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor,
+	ID3D11ShaderResourceView* reflectionTexture, SimpleMath::Matrix reflectionMatrix)
 {
 
-	if (!SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor, ambientColor, 0.0f, 25.0f)) {
+	if (!SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix, texture, 
+		lightDirection, diffuseColor, ambientColor, 0.0f, 25.0f, reflectionTexture, reflectionMatrix)) {
 		return false;
 	}
 
@@ -239,19 +256,22 @@ void Shader::RenderShader(int vertexCount, int instanceCount)
 bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Matrix viewMatrix, SimpleMath::Matrix projectionMatrix,
 	ID3D11ShaderResourceView* texture, SimpleMath::Vector3 lightDirection, 
 	SimpleMath::Vector4 diffuseColor, DirectX::SimpleMath::Vector4 ambientColor,
-	float fogStart, float fogEnd)
+	float fogStart, float fogEnd,
+	ID3D11ShaderResourceView* reflectionTexture, SimpleMath::Matrix reflectionMatrix)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	LightBufferType* dataPtr2;
 	FogBufferType* dataPtr3;
+	ReflectionBufferType* dataPtr4;
 	unsigned int bufferNumber;
 
 	// Transpose the matrices to prepare them for the shader.
 	worldMatrix			= worldMatrix.Transpose();
 	viewMatrix			= viewMatrix.Transpose();
 	projectionMatrix	= projectionMatrix.Transpose();
+	reflectionMatrix	= reflectionMatrix.Transpose();
 
 	auto deviceContext = m_Graphics->getRenderer()->getContext();
 
@@ -341,6 +361,37 @@ bool Shader::SetShaderParameters(SimpleMath::Matrix worldMatrix, SimpleMath::Mat
 	// Now set the fog buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, m_fogBuffer.GetAddressOf());
 
+	////////////////////////////////////////////////////////
+	//
+	////////////////////////////////////////////////////////
+	// Lock the reflection constant buffer so it can be written to.
+	result = deviceContext->Map(m_reflectionBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the matrix constant buffer.
+	dataPtr4 = (ReflectionBufferType*)mappedResource.pData;
+
+	// Copy the matrix into the reflection constant buffer.
+	dataPtr4->reflectionMatrix = reflectionMatrix;
+
+	// Unlock the reflection constant buffer.
+	deviceContext->Unmap(m_reflectionBuffer.Get(), 0);
+
+	// Set the position of the reflection constant buffer in the vertex shader.
+	bufferNumber = 1;
+
+	// Now set the reflection constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, m_reflectionBuffer.GetAddressOf());
+
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+
+	// Set the reflection texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(1, 1, &reflectionTexture);
+
 	return true;
 }
 
@@ -357,6 +408,8 @@ void Shader::ResetShader()
 	m_layout.Reset();
 	m_matrixBuffer.Reset();
 	m_sampleState.Reset();
+	m_fogBuffer.Reset();
+	m_reflectionBuffer.Reset();
 }
 
 bool Shader::GetShaderFile(std::string fileName, ShaderFileType* shaderData)
