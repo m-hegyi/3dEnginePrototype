@@ -2,7 +2,9 @@
 
 RenderTexture::RenderTexture(std::shared_ptr<Graphics> graphics) : m_Graphics(graphics)
 {
-
+	m_renderTargetTexture = 0;
+	m_renderTargetView = 0;
+	m_shaderResourceView = 0;
 }
 
 RenderTexture::~RenderTexture()
@@ -103,5 +105,4 @@ void RenderTexture::ClearRenderTarget(float red, float green, float blue, float 
 
 	// Clear the depth buffer.
 	deviceContext->ClearDepthStencilView(m_Graphics->getRenderer()->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
 }

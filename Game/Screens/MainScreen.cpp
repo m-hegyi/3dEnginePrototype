@@ -15,29 +15,9 @@ void MainScreen::Load(HWND window)
 {
 	m_Camera = std::make_shared<Camera>();
 
-	//m_Terrain = std::make_unique<ChunkTerrain>();
+	m_Bitmap = std::make_unique<Bitmap>();
 
-	//m_Terrain->Initialize(m_Graphics);
-
-	//m_Shader = std::make_shared<Shader>();
-
-	//if (!m_Shader->Initialize(window, m_Graphics, "LightVertex.cso", "LightPixel.cso")) {
-		//OnDeviceLost();
-	//}
-
-	m_Light = std::make_unique<Light>();
-
-	if (!m_Light) {
-		//OnDeviceLost();
-	}
-
-	m_Light->SetAmbientColor(0.3f, 0.3f, 0.3f, 1.0f);
-	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_Light->SetDirection(1.0f, -1.0f, 1.0f);
-
-	//m_Bitmap = std::make_unique<Bitmap>();
-
-	//m_Bitmap->Initialize(m_Graphics, L"Assets/texture1.png", 240, 240);
+	m_Bitmap->Initialize(m_Graphics, L"Assets/texture1.png", 240, 240);
 
 	m_RenderTexture = std::make_unique<RenderTexture>(m_Graphics);
 
@@ -59,41 +39,15 @@ void MainScreen::Load(HWND window)
 
 	m_LightShader->Initialize(window);
 
-	m_FogShader = std::make_shared<FogShader>(m_Graphics);
+	m_Light = std::make_unique<Light>();
 
-	m_FogShader->Initialize(window);
+	m_Light->SetDirection(1.0f, 1.0f, 1.0f);
+	m_Light->SetAmbientColor(1.0f, 1.0f, 1.0f, .2f);
+	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	m_Model2 = std::make_unique<Model>();
+	m_DebugWindow = std::make_unique<DebugWindow>();
 
-	std::vector<DirectX::SimpleMath::Vector3> position2;
-
-	position2.push_back(DirectX::SimpleMath::Vector3(4.0f, 0.0f, 0.0f));
-
-	m_Model2->Initialize(m_Graphics, "Data/cube.txt", L"Assets/texture1.png", position2);
-
-	m_Model3 = std::make_unique<Model>();
-
-	std::vector<DirectX::SimpleMath::Vector3> position3;
-
-	position3.push_back(DirectX::SimpleMath::Vector3(6.0f, 0.0f, 0.0f));
-
-	m_Model3->Initialize(m_Graphics, "Data/cube.txt", L"Assets/texture1.png", position3);
-
-	m_Floor = std::make_unique<Model>();
-
-	std::vector<DirectX::SimpleMath::Vector3> position4;
-
-	position4.push_back(DirectX::SimpleMath::Vector3(0.0f, -3.0f, 0.0f));
-
-	m_Floor->Initialize(m_Graphics, "Data/floor.txt", L"Assets/texture1.png", position4);
-
-	m_ReflectionShader = std::make_shared<ReflectionShader>(m_Graphics);
-
-	m_ReflectionShader->Initialize(window);
-
-	//m_DebugWindow = std::make_unique<DebugWindow>();
-
-	//m_DebugWindow->Initialize(m_Graphics, 300, 300);
+	m_DebugWindow->Initialize(m_Graphics, 300, 300);
 }
 
 void MainScreen::UnLoad()
@@ -116,15 +70,15 @@ bool MainScreen::Render()
 
 	m_Graphics->getRenderer()->TurnZBufferOff();
 
-	/*m_DebugWindow->Render();
+	m_Bitmap->Render();
 
-	m_Shader->Render(m_DebugWindow->GetIndexCount(), m_DebugWindow->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
-		m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-*/
-	//m_Bitmap->Render();
+	m_BasicShader->Render(m_Bitmap->GetIndexCount(), 1, m_Bitmap->GetWorldMatrix(),
+		m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(), m_Bitmap->GetTexture());
 
-	//m_Shader->Render(m_Bitmap->GetIndexCount(), m_Bitmap->GetWorldMatrix(), m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(),
-		//m_Bitmap->GetTexture(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_DebugWindow->Render();
+	
+	m_BasicShader->Render(m_DebugWindow->GetIndexCount(), 1, m_DebugWindow->GetWorldMatrix(),
+		m_Camera->Get2DViewMatrix(), m_Camera->GetOrthoMatrix(), m_RenderTexture->GetShaderResourceView());
 
 	m_Graphics->getRenderer()->TurnZBufferOn();
 
@@ -147,16 +101,7 @@ bool MainScreen::RenderToTexture()
 
 	m_RenderTexture->SetRenderTarget();
 
-	m_RenderTexture->ClearRenderTarget(0.0f, 0.0f, 1.0f, 1.0f);
-
-	m_Camera->CalculateReflectionMatrix();
-
-	auto reflectionMatrix = m_Camera->GetReflectionMatrix();
-
-	m_Floor->Render();
-
-	m_LightShader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(), m_Model->GetWorldMatrix(), reflectionMatrix,
-		m_Camera->GetProjectionMatrix(), m_Model->getTexture(), m_Light->GetDirection(), m_Light->GetDiffuseColor(), DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_RenderTexture->ClearRenderTarget(0.0f, 1.0f, 1.0f, 1.0f);
 
 	RenderScene();
 
@@ -169,30 +114,10 @@ bool MainScreen::RenderScene()
 	
 	m_Model->Render();
 
-	m_BasicShader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(),
-		m_Model->GetWorldMatrix(), m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), m_Model->getTexture());
-
-	m_Model2->Render();
-
-	m_LightShader->Render(m_Model2->GetVertexCount(), m_Model2->GetInstanceCount(), m_Model2->GetWorldMatrix(),
-		m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), m_Model2->getTexture(),
+	m_LightShader->Render(m_Model->GetVertexCount(), m_Model->GetInstanceCount(),
+		m_Model->GetWorldMatrix(), m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), m_Model->getTexture(), 
 		m_Light->GetDirection(), m_Light->GetDiffuseColor(), m_Light->GetAmbientColor());
 
-	m_Model3->Render();
-
-	m_FogShader->Render(m_Model3->GetVertexCount(), m_Model3->GetInstanceCount(), m_Model3->GetWorldMatrix(),
-		m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), m_Model3->getTexture(),
-		m_Light->GetDirection(), m_Light->GetDiffuseColor(), m_Light->GetAmbientColor(),
-		0.0f, 25.f);
-	
-	m_Floor->Render();
-
-	m_ReflectionShader->Render(m_Floor->GetVertexCount(), m_Floor->GetInstanceCount(), m_Floor->GetWorldMatrix(),
-		m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), m_Floor->getTexture(),
-		m_Light->GetDirection(), m_Light->GetDiffuseColor(), m_Light->GetAmbientColor(), 
-		m_RenderTexture->GetShaderResourceView(), m_Camera->GetReflectionMatrix());
-
-	//m_Terrain->Render(m_Shader, m_Camera);
 
 	return true;
 }
@@ -282,9 +207,9 @@ bool MainScreen::Update(DX::StepTimer const& timer)
 		//m_Camera->SetRotation(0.0f, rotation.y + delta.x, .0f);
 	}
 
-	//m_Bitmap->Update(400, 100);
+	m_Bitmap->Update(400, 100);
 
-	//m_DebugWindow->Update(100, 100);
+	m_DebugWindow->Update(100, 100);
 
 
 	return true;
